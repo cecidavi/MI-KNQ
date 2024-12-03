@@ -26,25 +26,29 @@ include('conexion.php'); // Incluir la conexión a la base de datos
         <p>Aquí puedes gestionar los empleados.</p>
 
         <?php
-        // Consulta para obtener los datos de los empleados
-        $sql = "SELECT id_empleado, nombre, apellido_paterno, apellido_materno, telefono FROM empleados";
+        // Consulta para obtener los datos de los empleados y la unidad asignada actual (si existe)
+        $sql = "SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.telefono, u.numero_unidad 
+                FROM empleados e 
+                LEFT JOIN operador_unidad ou ON e.id_empleado = ou.id_operador AND ou.fecha_desasignacion IS NULL
+                LEFT JOIN unidades u ON ou.id_unidad = u.id_unidad";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             echo "<table class='table'>";
-            echo "<thead><tr><th>ID</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Teléfono</th><th>Acciones</th><th>Unidad</th></tr></thead>";
+            echo "<thead><tr><th>ID</th><th>Unidad</th><th>Nombre</th><th>Apellido Paterno</th><th>Apellido Materno</th><th>Teléfono</th><th>Acciones</th><th>Modificar Unidad</th></tr></thead>";
             echo "<tbody>";
 
             // Salida de datos de cada fila
             while($row = $result->fetch_assoc()) {
                 echo "<tr>";
                 echo "<td>" . $row["id_empleado"] . "</td>";
+                echo "<td>" . ($row["numero_unidad"] ? $row["numero_unidad"] : "Sin unidad asignada") . "</td>";
                 echo "<td>" . $row["nombre"] . "</td>";
                 echo "<td>" . $row["apellido_paterno"] . "</td>";
                 echo "<td>" . $row["apellido_materno"] . "</td>";
                 echo "<td>" . $row["telefono"] . "</td>";
                 echo "<td><a href='empleado.php?id=" . $row["id_empleado"] . "' class='btn btn-info'>Ver/Modificar</a></td>";
-                echo "<td><a href='unidades_empleado.php?id=" . $row["id_empleado"] . "' class='btn btn-danger'>Unidad</a></td>";
+                echo "<td><a href='unidades_empleado.php?id=" . $row["id_empleado"] . "' class='btn btn-danger'>Modificar Unidad</a></td>";
                 echo "</tr>";
             }
 
