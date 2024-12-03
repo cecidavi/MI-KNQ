@@ -15,7 +15,7 @@ include('includes/header.php');
     <p>Use el menú para navegar por las diferentes secciones.</p>
     
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Empleados</h5>
@@ -24,16 +24,7 @@ include('includes/header.php');
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Solicitudes de Vacaciones</h5>
-                    <p class="card-text">Revise y apruebe las solicitudes de vacaciones.</p>
-                    <a href="vacaciones.php" class="btn btn-primary">Ir a Vacaciones</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Reportes</h5>
