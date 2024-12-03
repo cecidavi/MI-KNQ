@@ -64,9 +64,10 @@ if (isset($_GET['id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // Asignar nueva unidad al operador
+    // Asignar nueva unidad y fábrica al operador
     if (isset($_POST['asignar_unidad'])) {
         $id_unidad = $_POST['id_unidad'];
+        $id_fabrica = $_POST['id_fabrica'];
         $fecha_asignacion = $_POST['fecha_asignacion'];
 
         // Desasignar la unidad actual
@@ -77,18 +78,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_desasignar->execute();
         }
 
-        // Asignar la nueva unidad
+        // Asignar la nueva unidad y actualizar la fábrica
         $sql_asignar = "INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (?, ?, ?)";
         $stmt_asignar = $conn->prepare($sql_asignar);
         $stmt_asignar->bind_param("iis", $id_empleado, $id_unidad, $fecha_asignacion);
 
-        if ($stmt_asignar->execute()) {
-            echo "<p>Unidad asignada correctamente.</p>";
+        $sql_actualizar_fabrica = "UPDATE unidades SET id_fabrica = ? WHERE id_unidad = ?";
+        $stmt_actualizar_fabrica = $conn->prepare($sql_actualizar_fabrica);
+        $stmt_actualizar_fabrica->bind_param("ii", $id_fabrica, $id_unidad);
+
+        if ($stmt_asignar->execute() && $stmt_actualizar_fabrica->execute()) {
+            echo "<p>Unidad y fábrica asignadas correctamente.</p>";
             // Redirigir para evitar resubmisión del formulario
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id_empleado);
             exit();
         } else {
-            echo "<p>Error al asignar la unidad: " . $conn->error . "</p>";
+            echo "<p>Error al asignar la unidad o fábrica: " . $conn->error . "</p>";
         }
     }
 }
@@ -102,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 
-    <h2>Asignación de Unidad</h2>
+    <h2>Asignación de Unidad y Fábrica</h2>
     <?php if ($unidad): ?>
         <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
     <?php else: ?>
@@ -120,9 +125,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             ?>
         </select><br>
+        <label>Fábrica:</label>
+        <select name="id_fabrica">
+            <?php
+            $sql_fabricas = "SELECT id_fabrica, nombre_fabrica FROM fabricas";
+            $result_fabricas = $conn->query($sql_fabricas);
+            while ($row = $result_fabricas->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['id_fabrica']) . "'>" . htmlspecialchars($row['nombre_fabrica']) . "</option>";
+            }
+            ?>
+        </select><br>
         <label>Fecha de Asignación:</label>
         <input type="date" name="fecha_asignacion" required><br>
-        <input type="submit" name="asignar_unidad" value="Asignar Unidad">
+        <input type="submit" name="asignar_unidad" value="Asignar">
     </form>
 
     <h2>Historial de Unidades Asignadas</h2>
