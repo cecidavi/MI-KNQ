@@ -1,0 +1,281 @@
+CREATE TABLE departamentos (
+    id_departamento INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_departamento VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+
+CREATE TABLE fabricas (
+    id_fabrica INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_fabrica VARCHAR(255) NOT NULL,
+    ubicacion VARCHAR(255)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE empleados (
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    apellido_paterno VARCHAR(255) NOT NULL,
+    apellido_materno VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE,
+    rfc CHAR(13) NOT NULL,
+    nss CHAR(11) NOT NULL,
+    curp CHAR(18) NOT NULL,
+    edad INT,
+    telefono VARCHAR(20),
+    correo VARCHAR(40),
+    domicilio VARCHAR(255),
+    salario DECIMAL(10, 2),
+    fecha_ingreso DATE,
+    fecha_baja DATE,
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+    id_departamento INT,
+    FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE unidades (
+    id_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    numero_unidad VARCHAR(50) NOT NULL,
+    id_fabrica INT,
+    FOREIGN KEY (id_fabrica) REFERENCES fabricas(id_fabrica)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE operador_unidad (
+    id_operador_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_operador INT,
+    id_unidad INT,
+    fecha_asignacion DATE NOT NULL,
+    fecha_desasignacion DATE,
+    FOREIGN KEY (id_operador) REFERENCES empleados(id_empleado),
+    FOREIGN KEY (id_unidad) REFERENCES unidades(id_unidad)
+) ENGINE=InnoDB;
+
+
+
+Ejemplo
+
+
+
+INSERT INTO departamentos (nombre_departamento) VALUES ('Operadores');
+INSERT INTO fabricas (nombre_fabrica, ubicacion) VALUES ('Martín Rea Arteaga', 'Dirección de la fábrica');
+INSERT INTO empleados (nombre, apellido_paterno, apellido_materno, fecha_nacimiento, rfc, nss, curp, edad, telefono, correo, domicilio, salario, fecha_ingreso, estado, id_departamento) 
+VALUES ('José', 'Alberto', 'Pérez', '1980-01-01', 'RFC1234567890A', '12345678901', 'CURP1234567890ABCDE', 44, '5551234567', 'jose.alberto@example.com', 'Domicilio Ejemplo', 5000.00, '2020-01-01', 'activo', 1);
+INSERT INTO unidades (numero_unidad, id_fabrica) VALUES ('305', 1);
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 1, '2024-01-01');
+UPDATE operador_unidad SET fecha_desasignacion = '2024-06-01' WHERE id_operador_unidad = 1;
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 2, '2024-06-02');
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+-- Crear la tabla departamentos
+CREATE TABLE departamentos (
+    id_departamento INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_departamento VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+-- Crear la tabla fabricas
+CREATE TABLE fabricas (
+    id_fabrica INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_fabrica VARCHAR(255) NOT NULL,
+    ubicacion VARCHAR(255)
+) ENGINE=InnoDB;
+
+-- Crear la tabla empleados
+CREATE TABLE empleados (
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    apellido_paterno VARCHAR(255) NOT NULL,
+    apellido_materno VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE,
+    rfc CHAR(13) NOT NULL,
+    nss CHAR(11) NOT NULL,
+    curp CHAR(18) NOT NULL,
+    edad INT,
+    telefono VARCHAR(20),
+    correo VARCHAR(40),
+    domicilio VARCHAR(255),
+    salario DECIMAL(10, 2),
+    fecha_ingreso DATE,
+    fecha_baja DATE,
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+    id_departamento INT,
+    FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento)
+) ENGINE=InnoDB;
+
+-- Crear la tabla unidades
+CREATE TABLE unidades (
+    id_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    numero_unidad VARCHAR(50) NOT NULL,
+    id_fabrica INT,
+    FOREIGN KEY (id_fabrica) REFERENCES fabricas(id_fabrica)
+) ENGINE=InnoDB;
+
+-- Crear la tabla operador_unidad
+CREATE TABLE operador_unidad (
+    id_operador_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_operador INT,
+    id_unidad INT,
+    fecha_asignacion DATE NOT NULL,
+    fecha_desasignacion DATE,
+    FOREIGN KEY (id_operador) REFERENCES empleados(id_empleado),
+    FOREIGN KEY (id_unidad) REFERENCES unidades(id_unidad)
+) ENGINE=InnoDB;
+
+-- Insertar un departamento
+INSERT INTO departamentos (nombre_departamento) VALUES ('Operadores');
+
+-- Insertar una fábrica
+INSERT INTO fabricas (nombre_fabrica, ubicacion) VALUES ('Martín Rea Arteaga', 'Dirección de la fábrica');
+
+-- Insertar un empleado (operador)
+INSERT INTO empleados (nombre, apellido_paterno, apellido_materno, fecha_nacimiento, rfc, nss, curp, edad, telefono, correo, domicilio, salario, fecha_ingreso, estado, id_departamento) 
+VALUES ('José', 'Alberto', 'Pérez', '1980-01-01', 'RFC1234567890A', '12345678901', 'CURP1234567890ABCDE', 44, '5551234567', 'jose.alberto@example.com', 'Domicilio Ejemplo', 5000.00, '2020-01-01', 'activo', 1);
+
+-- Insertar una unidad
+INSERT INTO unidades (numero_unidad, id_fabrica) VALUES ('305', 1);
+
+-- Asignar una unidad a un operador en la tabla intermedia
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 1, '2024-01-01');
+
+-- Desasignar la unidad del operador actual en la tabla intermedia
+UPDATE operador_unidad SET fecha_desasignacion = '2024-06-01' WHERE id_operador_unidad = 1;
+
+-- Insertar una nueva unidad (si no existe aún)
+INSERT INTO unidades (numero_unidad, id_fabrica) VALUES ('306', 1);
+
+-- Asignar la nueva unidad al operador en la tabla intermedia
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 2, '2024-06-02');
+
+-- Consultar la unidad actual de un operador
+SELECT u.numero_unidad, f.nombre_fabrica
+FROM unidades u
+JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
+JOIN fabricas f ON u.id_fabrica = f.id_fabrica
+WHERE ou.id_operador = 1 AND ou.fecha_desasignacion IS NULL;
+
+-- Consultar el historial de unidades de un operador
+SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion, ou.fecha_desasignacion
+FROM unidades u
+JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
+JOIN fabricas f ON u.id_fabrica = f.id_fabrica
+WHERE ou.id_operador = 1
+ORDER BY ou.fecha_asignacion;
+
+
+
+------------------------------------------------------------------------------------
+
+
+CREATE TABLE departamentos (
+    id_departamento INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_departamento VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+
+CREATE TABLE fabricas (
+    id_fabrica INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_fabrica VARCHAR(255) NOT NULL,
+    ubicacion VARCHAR(255)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE empleados (
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    apellido_paterno VARCHAR(255) NOT NULL,
+    apellido_materno VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE,
+    rfc CHAR(13) NOT NULL,
+    nss CHAR(11) NOT NULL,
+    curp CHAR(18) NOT NULL,
+    edad INT,
+    telefono VARCHAR(20),
+    correo VARCHAR(40),
+    domicilio VARCHAR(255),
+    salario DECIMAL(10, 2),
+    fecha_ingreso DATE,
+    fecha_baja DATE,
+    estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+    id_departamento INT,
+    FOREIGN KEY (id_departamento) REFERENCES departamentos(id_departamento)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE unidades (
+    id_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    numero_unidad VARCHAR(50) NOT NULL,
+    id_fabrica INT,
+    FOREIGN KEY (id_fabrica) REFERENCES fabricas(id_fabrica)
+) ENGINE=InnoDB;
+
+
+
+CREATE TABLE operador_unidad (
+    id_operador_unidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_operador INT,
+    id_unidad INT,
+    fecha_asignacion DATE NOT NULL,
+    fecha_desasignacion DATE,
+    FOREIGN KEY (id_operador) REFERENCES empleados(id_empleado),
+    FOREIGN KEY (id_unidad) REFERENCES unidades(id_unidad)
+) ENGINE=InnoDB;
+
+
+
+
+INSERT INTO departamentos (nombre_departamento) VALUES ('Operadores');
+
+
+
+INSERT INTO fabricas (nombre_fabrica, ubicacion) VALUES ('Martín Rea Arteaga', 'Dirección de la fábrica');
+
+
+
+INSERT INTO empleados (nombre, apellido_paterno, apellido_materno, fecha_nacimiento, rfc, nss, curp, edad, telefono, correo, domicilio, salario, fecha_ingreso, estado, id_departamento) 
+VALUES ('José', 'Alberto', 'Pérez', '1980-01-01', 'RFC1234567890A', '12345678901', 'CURP1234567890ABCDE', 44, '5551234567', 'jose.alberto@example.com', 'Domicilio Ejemplo', 5000.00, '2020-01-01', 'activo', 1);
+
+
+
+INSERT INTO unidades (numero_unidad, id_fabrica) VALUES ('305', 1);
+
+
+
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 1, '2024-01-01');
+
+
+UPDATE operador_unidad SET fecha_desasignacion = '2024-06-01' WHERE id_operador_unidad = 1;
+
+
+INSERT INTO unidades (numero_unidad, id_fabrica) VALUES ('306', 1);
+
+
+
+INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (1, 2, '2024-06-02');
+
+
+
+SELECT u.numero_unidad, f.nombre_fabrica
+FROM unidades u
+JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
+JOIN fabricas f ON u.id_fabrica = f.id_fabrica
+WHERE ou.id_operador = 1 AND ou.fecha_desasignacion IS NULL;
+
+
+
+SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion, ou.fecha_desasignacion
+FROM unidades u
+JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
+JOIN fabricas f ON u.id_fabrica = f.id_fabrica
+WHERE ou.id_operador = 1
+ORDER BY ou.fecha_asignacion;
+
+
+
+
