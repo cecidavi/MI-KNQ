@@ -126,15 +126,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="rfc">RFC:</label>
-                <input type="text" class="form-control" id="rfc" name="rfc" value="<?php echo $empleado['rfc']; ?>" required>
+                <input type="text" class="form-control" id="rfc" name="rfc" value="<?php echo $empleado['rfc']; ?>" required maxlength="13">
             </div>
             <div class="form-group">
                 <label for="nss">NSS:</label>
-                <input type="text" class="form-control" id="nss" name="nss" value="<?php echo $empleado['nss']; ?>" required>
+                <input type="text" class="form-control" id="nss" name="nss" value="<?php echo $empleado['nss']; ?>" required maxlength="11">
             </div>
             <div class="form-group">
                 <label for="curp">CURP:</label>
-                <input type="text" class="form-control" id="curp" name="curp" value="<?php echo $empleado['curp']; ?>" required>
+                <input type="text" class="form-control" id="curp" name="curp" value="<?php echo $empleado['curp']; ?>" required maxlength="18">
             </div>
             <div class="form-group">
                 <label for="edad">Edad:</label>
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="telefono">Teléfono:</label>
-                <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo $empleado['telefono']; ?>" required>
+                <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo $empleado['telefono']; ?>" required maxlength="10">
             </div>
             <div class="form-group">
                 <label for="correo">Correo:</label>
