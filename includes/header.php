@@ -27,6 +27,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="reportes.php">Reportes</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gestionar_fabricas.php">Fabricas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gestionar_unidades.php">Unidades</a>
+            </li>
         </ul>
     </div>
 </nav>
