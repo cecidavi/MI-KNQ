@@ -29,7 +29,7 @@ if (isset($_GET['id'])) {
     }
 
     // Consulta para obtener los datos de la unidad asignada al operador
-    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion
+    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion, ou.id_operador_unidad
                    FROM unidades u
                    JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
                    JOIN fabricas f ON u.id_fabrica = f.id_fabrica
@@ -63,50 +63,6 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Actualizar los datos del empleado en la base de datos
-    if (isset($_POST['actualizar_empleado'])) {
-        $nombre = $_POST['nombre'];
-        $apellido_paterno = $_POST['apellido_paterno'];
-        $apellido_materno = $_POST['apellido_materno'];
-        $fecha_nacimiento = $_POST['fecha_nacimiento'];
-        $rfc = $_POST['rfc'];
-        $nss = $_POST['nss'];
-        $curp = $_POST['curp'];
-        $edad = $_POST['edad'];
-        $telefono = $_POST['telefono'];
-        $correo = $_POST['correo'];
-        $domicilio = $_POST['domicilio'];
-        $salario = $_POST['salario'];
-        $fecha_ingreso = $_POST['fecha_ingreso'];
-        $estado = $_POST['estado'];
-        $id_departamento = $_POST['id_departamento'];
-
-        $sql = "UPDATE empleados SET 
-                nombre = ?, 
-                apellido_paterno = ?, 
-                apellido_materno = ?, 
-                fecha_nacimiento = ?, 
-                rfc = ?, 
-                nss = ?, 
-                curp = ?, 
-                edad = ?, 
-                telefono = ?, 
-                correo = ?, 
-                domicilio = ?, 
-                salario = ?, 
-                fecha_ingreso = ?, 
-                estado = ?, 
-                id_departamento = ? 
-                WHERE id_empleado = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssssssssssi", $nombre, $apellido_paterno, $apellido_materno, $fecha_nacimiento, $rfc, $nss, $curp, $edad, $telefono, $correo, $domicilio, $salario, $fecha_ingreso, $estado, $id_departamento, $id_empleado);
-
-        if ($stmt->execute()) {
-            echo "<p>Datos actualizados correctamente.</p>";
-        } else {
-            echo "<p>Error al actualizar los datos: " . $conn->error . "</p>";
-        }
-    }
 
     // Asignar nueva unidad al operador
     if (isset($_POST['asignar_unidad'])) {
@@ -115,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Desasignar la unidad actual
         if ($unidad) {
-            $sql_desasignar = "UPDATE operador_unidad SET fecha_desasignacion = ? WHERE id_operador_unidad = ?";
+            $sql_desasignar = "UPDATE operador_unidad SET fecha_desasignacion = ? WHERE id_operador = ? AND fecha_desasignacion IS NULL";
             $stmt_desasignar = $conn->prepare($sql_desasignar);
-            $stmt_desasignar->bind_param("si", $fecha_asignacion, $unidad['id_operador_unidad']);
+            $stmt_desasignar->bind_param("si", $fecha_asignacion, $id_empleado);
             $stmt_desasignar->execute();
         }
 
@@ -128,6 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmt_asignar->execute()) {
             echo "<p>Unidad asignada correctamente.</p>";
+            // Redirigir para evitar resubmisión del formulario
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id_empleado);
+            exit();
         } else {
             echo "<p>Error al asignar la unidad: " . $conn->error . "</p>";
         }
@@ -139,80 +98,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles del Empleado - MI KNQ</title>
-    <link rel="stylesheet" href="path/to/bootstrap.min.css"> <!-- Asegúrate de que esta ruta es correcta -->
-    <link rel="stylesheet" href="path/to/Empleados.css"> <!-- Asegúrate de que esta ruta es correcta -->
+    <title>Detalle del Empleado</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Unidades del Empleado</h2>
 
-        <?php if ($unidad): ?>
-            <h3>Unidad Asignada</h3>
-            <p><strong>Número de Unidad:</strong> <?php echo $unidad['numero_unidad']; ?></p>
-            <p><strong>Fábrica:</strong> <?php echo $unidad['nombre_fabrica']; ?></p>
-            <p><strong>Fecha de Asignación:</strong> <?php echo $unidad['fecha_asignacion']; ?></p>
-        <?php else: ?>
-            <p>Este empleado no tiene una unidad asignada actualmente.</p>
-        <?php endif; ?>
+    <h2>Asignación de Unidad</h2>
+    <?php if ($unidad): ?>
+        <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
+    <?php else: ?>
+        <p>No hay unidad asignada actualmente.</p>
+    <?php endif; ?>
 
-        <h3>Asignar Nueva Unidad</h3>
-        <form method="POST" action="">
-            <input type="hidden" name="asignar_unidad" value="1">
-            <div class="form-group">
-                <label for="id_unidad">Unidad:</label>
-                <select class="form-control" id="id_unidad" name="id_unidad" required>
-                    <?php
-                    // Consulta para obtener las unidades disponibles
-                    $sql_unidades = "SELECT id_unidad, numero_unidad FROM unidades";
-                    $result_unidades = $conn->query($sql_unidades);
+    <form action="" method="post">
+        <label>Unidad:</label>
+        <select name="id_unidad">
+            <?php
+            $sql_unidades = "SELECT id_unidad, numero_unidad FROM unidades";
+            $result_unidades = $conn->query($sql_unidades);
+            while ($row = $result_unidades->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['id_unidad']) . "'>" . htmlspecialchars($row['numero_unidad']) . "</option>";
+            }
+            ?>
+        </select><br>
+        <label>Fecha de Asignación:</label>
+        <input type="date" name="fecha_asignacion" required><br>
+        <input type="submit" name="asignar_unidad" value="Asignar Unidad">
+    </form>
 
-                    if ($result_unidades->num_rows > 0) {
-                        while ($unidad = $result_unidades->fetch_assoc()) {
-                            echo "<option value='" . $unidad['id_unidad'] . "'>" . $unidad['numero_unidad'] . "</option>";
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="fecha_asignacion">Fecha de Asignación:</label>
-                <input type="date" class="form-control" id="fecha_asignacion" name="fecha_asignacion" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Asignar Unidad</button>
-        </form>
-
-        <h3>Historial de Unidades</h3>
-        <?php if (count($historial) > 0): ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Número de Unidad</th>
-                        <th>Fábrica</th>
-                        <th>Fecha de Asignación</th>
-                        <th>Fecha de Desasignación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($historial as $item): ?>
-                        <tr>
-                            <td><?php echo $item['numero_unidad']; ?></td>
-                            <td><?php echo $item['nombre_fabrica']; ?></td>
-                            <td><?php echo $item['fecha_asignacion']; ?></td>
-                            <td><?php echo $item['fecha_desasignacion'] ?: 'N/A'; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>No hay historial de unidades asignadas para este empleado.</p>
-        <?php endif; ?>
-    </div>
-    <script src="path/to/bootstrap.min.js"></script> <!-- Asegúrate de que esta ruta es correcta -->
+    <h2>Historial de Unidades Asignadas</h2>
+    <table>
+        <tr>
+            <th>Unidad</th>
+            <th>Fábrica</th>
+            <th>Fecha de Asignación</th>
+            <th>Fecha de Desasignación</th>
+        </tr>
+        <?php foreach ($historial as $registro): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($registro['numero_unidad']); ?></td>
+                <td><?php echo htmlspecialchars($registro['nombre_fabrica']); ?></td>
+                <td><?php echo htmlspecialchars($registro['fecha_asignacion']); ?></td>
+                <td><?php echo htmlspecialchars($registro['fecha_desasignacion']); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
 </body>
-</html>
 
-<?php
-include('includes/footer.php');
-?>
+</html>
