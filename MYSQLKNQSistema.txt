@@ -279,21 +279,6 @@ VALUES ('José', 'Alberto', 'Pérez', '1980-01-01', 'RFC1234567890A', '123456789
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Ejemplos de insert y de select 
 
 
@@ -345,3 +330,172 @@ INSERT INTO roles_permisos (rol_id, permiso_id) VALUES
 
 
 
+-----------------------------------------------------------------------------------------------------------------------
+
+
+base actualizada sin hacer alter table esta base es la completa para crear las tablas 
+
+CREATE TABLE `departamentos` (
+  `id_departamento` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre_departamento` varchar(255) NOT NULL,
+  PRIMARY KEY (`id_departamento`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `empleados` (
+  `id_empleado` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `apellido_paterno` varchar(255) NOT NULL,
+  `apellido_materno` varchar(255) NOT NULL,
+  `fecha_nacimiento` date DEFAULT NULL,
+  `rfc` char(13) NOT NULL,
+  `nss` char(11) NOT NULL,
+  `curp` char(18) NOT NULL,
+  `edad` int(11) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `correo` varchar(40) DEFAULT NULL,
+  `domicilio` varchar(255) DEFAULT NULL,
+  `salario` decimal(10,2) DEFAULT NULL,
+  `fecha_ingreso` date DEFAULT NULL,
+  `fecha_baja` date DEFAULT NULL,
+  `estado` enum('activo','inactivo') DEFAULT 'activo',
+  `id_departamento` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_empleado`),
+  KEY `id_departamento` (`id_departamento`),
+  CONSTRAINT `empleados_ibfk_1` FOREIGN KEY (`id_departamento`) REFERENCES `departamentos` (`id_departamento`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `fabricas` (
+  `id_fabrica` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre_fabrica` varchar(255) NOT NULL,
+  `ubicacion` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_fabrica`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `unidades` (
+  `id_unidad` int(11) NOT NULL AUTO_INCREMENT,
+  `numero_unidad` varchar(50) NOT NULL,
+  `id_operador` int(11) DEFAULT NULL,
+  `id_fabrica` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_unidad`),
+  KEY `id_operador` (`id_operador`),
+  KEY `id_fabrica` (`id_fabrica`),
+  CONSTRAINT `unidades_ibfk_1` FOREIGN KEY (`id_operador`) REFERENCES `empleados` (`id_empleado`),
+  CONSTRAINT `unidades_ibfk_2` FOREIGN KEY (`id_fabrica`) REFERENCES `fabricas` (`id_fabrica`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `departamento_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_ibfk_2` (`departamento_id`),
+  CONSTRAINT `users_ibfk_2` FOREIGN KEY (`departamento_id`) REFERENCES `departamentos` (`id_departamento`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `operador_unidad` (
+  `id_operador_unidad` int(11) NOT NULL AUTO_INCREMENT,
+  `id_operador` int(11) DEFAULT NULL,
+  `id_unidad` int(11) DEFAULT NULL,
+  `fecha_asignacion` date NOT NULL,
+  `fecha_desasignacion` date DEFAULT NULL,
+  PRIMARY KEY (`id_operador_unidad`),
+  KEY `id_operador` (`id_operador`),
+  KEY `id_unidad` (`id_unidad`),
+  CONSTRAINT `operador_unidad_ibfk_1` FOREIGN KEY (`id_operador`) REFERENCES `empleados` (`id_empleado`),
+  CONSTRAINT `operador_unidad_ibfk_2` FOREIGN KEY (`id_unidad`) REFERENCES `unidades` (`id_unidad`)
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+CREATE TABLE `inspeccion_unidad` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `responsable` varchar(255) NOT NULL,
+  `planta` varchar(255) NOT NULL,
+  `turno` varchar(255) NOT NULL,
+  `unidad` varchar(255) NOT NULL,
+  `tablero` varchar(255) DEFAULT NULL,
+  `tablero_comentarios` text DEFAULT NULL,
+  `asientos` varchar(255) DEFAULT NULL,
+  `asientos_comentarios` text DEFAULT NULL,
+  `tapiceria` varchar(255) DEFAULT NULL,
+  `tapiceria_comentarios` text DEFAULT NULL,
+  `cinturones` varchar(255) DEFAULT NULL,
+  `cinturones_comentarios` text DEFAULT NULL,
+  `pasamanos` varchar(255) DEFAULT NULL,
+  `pasamanos_comentarios` text DEFAULT NULL,
+  `retrovisor_pasillo` varchar(255) DEFAULT NULL,
+  `retrovisor_pasillo_comentarios` text DEFAULT NULL,
+  `botiquin` varchar(255) DEFAULT NULL,
+  `botiquin_comentarios` text DEFAULT NULL,
+  `extintor` varchar(255) DEFAULT NULL,
+  `extintor_comentarios` text DEFAULT NULL,
+  `alarma_reversa` varchar(255) DEFAULT NULL,
+  `alarma_reversa_comentarios` text DEFAULT NULL,
+  `luces_interiores` varchar(255) DEFAULT NULL,
+  `luces_interiores_comentarios` text DEFAULT NULL,
+  `luces_escalera` varchar(255) DEFAULT NULL,
+  `luces_escalera_comentarios` text DEFAULT NULL,
+  `puertas` varchar(255) DEFAULT NULL,
+  `puertas_comentarios` text DEFAULT NULL,
+  `salida_emergencia` varchar(255) DEFAULT NULL,
+  `salida_emergencia_comentarios` text DEFAULT NULL,
+  `asiento_operador` varchar(255) DEFAULT NULL,
+  `asiento_operador_comentarios` text DEFAULT NULL,
+  `cables_expuestos` varchar(255) DEFAULT NULL,
+  `cables_expuestos_comentarios` text DEFAULT NULL,
+  `poliza_seguro` varchar(255) DEFAULT NULL,
+  `poliza_seguro_comentarios` text DEFAULT NULL,
+  `tarjeta_circulacion` varchar(255) DEFAULT NULL,
+  `tarjeta_circulacion_comentarios` text DEFAULT NULL,
+  `retrovisor` varchar(255) DEFAULT NULL,
+  `retrovisor_comentarios` text DEFAULT NULL,
+  `luces_funcionando` varchar(255) DEFAULT NULL,
+  `luces_funcionando_comentarios` text DEFAULT NULL,
+  `luces_navegacion` varchar(255) DEFAULT NULL,
+  `luces_navegacion_comentarios` text DEFAULT NULL,
+  `intermitentes_funcionando` varchar(255) DEFAULT NULL,
+  `intermitentes_funcionando_comentarios` text DEFAULT NULL,
+  `llantas_buen_estado` varchar(255) DEFAULT NULL,
+  `llantas_buen_estado_comentarios` text DEFAULT NULL,
+  `presion_llantas` varchar(255) DEFAULT NULL,
+  `presion_llantas_comentarios` text DEFAULT NULL,
+  `retrovisores_laterales` varchar(255) DEFAULT NULL,
+  `retrovisores_laterales_comentarios` text DEFAULT NULL,
+  `carroceria` varchar(255) DEFAULT NULL,
+  `carroceria_comentarios` text DEFAULT NULL,
+  `cristales` varchar(255) DEFAULT NULL,
+  `cristales_comentarios` text DEFAULT NULL,
+  `calcamonias` varchar(255) DEFAULT NULL,
+  `calcamonias_comentarios` text DEFAULT NULL,
+  `placas` varchar(255) DEFAULT NULL,
+  `placas_comentarios` text DEFAULT NULL,
+  `fuga` varchar(255) DEFAULT NULL,
+  `fuga_comentarios` text DEFAULT NULL,
+  `micas` varchar(255) DEFAULT NULL,
+  `micas_comentarios` text DEFAULT NULL,
+  `bateria_1` varchar(255) DEFAULT NULL,
+  `bateria_1_comentarios` text DEFAULT NULL,
+  `bateria_2` varchar(255) DEFAULT NULL,
+  `bateria_2_comentarios` text DEFAULT NULL,
+  `interior_limpieza` varchar(255) DEFAULT NULL,
+  `interior_limpieza_comentarios` text DEFAULT NULL,
+  `lateral_izquierdo` varchar(255) DEFAULT NULL,
+  `lateral_izquierdo_comentarios` text DEFAULT NULL,
+  `lateral_derecho` varchar(255) DEFAULT NULL,
+  `lateral_derecho_comentarios` text DEFAULT NULL,
+  `frontal` varchar(255) DEFAULT NULL,
+  `frontal_comentarios` text DEFAULT NULL,
+  `tracero` varchar(255) DEFAULT NULL,
+  `tracero_comentarios` text DEFAULT NULL,
+  `uniforme` varchar(255) DEFAULT NULL,
+  `uniforme_comentarios` text DEFAULT NULL,
+  `alcoholimetia` varchar(255) DEFAULT NULL,
+  `alcoholimetia_comentarios` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
