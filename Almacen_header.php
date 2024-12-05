@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RECURSOS HUMANOS - MI KNQ</title>
+    <title>Almacen - MI KNQ</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
 <header>
-    <h1>RECURSOS HUMANOS - MI KNQ</h1>
+    <h1>Almacen - MI KNQ</h1>
 </header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="Inicio.php">Inicio</a>

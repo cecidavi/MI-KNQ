@@ -7,7 +7,7 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-include('includes/header.php');
+include('Almacen_header.php');
 ?>
 
 <div class="container">
@@ -20,7 +20,7 @@ include('includes/header.php');
                 <div class="card-body">
                     <h5 class="card-title">Piezas</h5>
                     <p class="card-text">Administre la informacion de las piezas.</p>
-                    <a href="Piezas.php" class="btn btn-primary">Ir a Piezas</a>
+                    <a href="" class="btn btn-primary">Ir a Piezas</a>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@ include('includes/header.php');
                 <div class="card-body">
                     <h5 class="card-title">Reportes</h5>
                     <p class="card-text">Genere y visualice reportes.</p>
-                    <a href="Almacen_reportes.php" class="btn btn-primary">Ir a Reportes</a>
+                    <a href="" class="btn btn-primary">Ir a Reportes</a>
                 </div>
             </div>
         </div>
