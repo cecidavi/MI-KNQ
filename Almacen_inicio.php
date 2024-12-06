@@ -20,7 +20,7 @@ include('Almacen_header.php');
                 <div class="card-body">
                     <h5 class="card-title">Piezas</h5>
                     <p class="card-text">Administre la informacion de las piezas.</p>
-                    <a href="" class="btn btn-primary">Ir a Piezas</a>
+                    <a href="Piezas.php" class="btn btn-primary">Ir a Piezas</a>
                 </div>
             </div>
         </div>
