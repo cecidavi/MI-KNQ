@@ -162,3 +162,47 @@ CREATE TABLE `inspeccion_unidad` (
   `alcoholimetia_comentarios` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+
+--------------------------------------------------------------------------------------
+
+-- Datos para la tabla departamentos
+INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES
+(1, 'Recursos Humanos'),
+(2, 'IT'),
+(3, 'Contabilidad'),
+(4, 'Logística'),
+(5, 'Ventas');
+
+-- Datos para la tabla empleados
+INSERT INTO empleados (id_empleado, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, rfc, nss, curp, edad, telefono, correo, domicilio, salario, fecha_ingreso, fecha_baja, estado, id_departamento) VALUES
+(1, 'Juan', 'Pérez', 'González', '1985-02-15', 'PEGO850215HDFRZN01', '12345678901', 'PEGO850215HDFRZN01', 39, '5551234567', 'juan.perez@example.com', 'Calle Falsa 123, Ciudad', 25000.00, '2010-06-01', NULL, 'activo', 1),
+(2, 'María', 'López', 'Martínez', '1990-08-25', 'LOMA900825MDFRMR02', '23456789012', 'LOMA900825MDFRMR02', 34, '5552345678', 'maria.lopez@example.com', 'Avenida Siempre Viva 456, Ciudad', 30000.00, '2012-09-15', NULL, 'activo', 2),
+(3, 'Carlos', 'Hernández', 'Jiménez', '1987-11-05', 'HEJI871105HDFCRM03', '34567890123', 'HEJI871105HDFCRM03', 37, '5553456789', 'carlos.hernandez@example.com', 'Boulevard de los Sueños 789, Ciudad', 28000.00, '2011-04-20', NULL, 'activo', 3),
+(4, 'Ana', 'Ramírez', 'Flores', '1995-01-10', 'RAFL950110HDFLNR04', '45678901234', 'RAFL950110HDFLNR04', 29, '5554567890', 'ana.ramirez@example.com', 'Calle del Sol 101, Ciudad', 35000.00, '2015-03-10', NULL, 'activo', 4),
+(5, 'Luis', 'García', 'Sánchez', '1983-07-20', 'GASA830720HDFLXS05', '56789012345', 'GASA830720HDFLXS05', 41, '5555678901', 'luis.garcia@example.com', 'Avenida de la Luna 202, Ciudad', 40000.00, '2009-11-01', NULL, 'activo', 5);
+
+-- Datos para la tabla fabricas
+INSERT INTO fabricas (id_fabrica, nombre_fabrica, ubicacion) VALUES
+(1, 'Fábrica Norte', 'Calle Industrial 100, Ciudad Norte'),
+(2, 'Fábrica Sur', 'Avenida Manufactura 200, Ciudad Sur'),
+(3, 'Fábrica Este', 'Boulevard Producción 300, Ciudad Este'),
+(4, 'Fábrica Oeste', 'Calle Producción 400, Ciudad Oeste'),
+(5, 'Fábrica Central', 'Avenida Industrial 500, Ciudad Central');
+
+-- Datos para la tabla unidades
+INSERT INTO unidades (id_unidad, numero_unidad) VALUES
+(1, 'Unidad 101'),
+(2, 'Unidad 102'),
+(3, 'Unidad 103'),
+(4, 'Unidad 104'),
+(5, 'Unidad 105');
+
+-- Datos para la tabla users con contraseñas en formato MD5
+INSERT INTO users (id, username, password, created_at, departamento_id) VALUES
+(1, 'admin', MD5('adminpassword'), current_timestamp(), 1),
+(2, 'it_user', MD5('itpassword'), current_timestamp(), 2),
+(3, 'cont_user', MD5('contpassword'), current_timestamp(), 3),
+(4, 'log_user', MD5('logpassword'), current_timestamp(), 4),
+(5, 'ventas_user', MD5('ventpassword'), current_timestamp(), 5);
