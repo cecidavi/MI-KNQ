@@ -28,7 +28,7 @@ if (isset($_GET['id'])) {
         exit();
     }
 
-    // Consulta para obtener los datos de la unidad asignada al operador
+    // Ajuste en la consulta SQL para obtener los datos de la unidad asignada al operador
     $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion
                    FROM unidades u
                    JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
@@ -162,44 +162,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="estado">Estado:</label>
-                <select class="form-control" id="estado" name="estado" required>
-                    <option value="activo" <?php if ($empleado['estado'] == 'activo') echo 'selected'; ?>>Activo</option>
-                    <option value="inactivo" <?php if ($empleado['estado'] == 'inactivo') echo 'selected'; ?>>Inactivo</option>
-                </select>
+                <input type="text" class="form-control" id="estado" name="estado" value="<?php echo $empleado['estado']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="id_departamento">Departamento:</label>
                 <select class="form-control" id="id_departamento" name="id_departamento" required>
                     <?php
-                    // Consulta para obtener los departamentos
                     $sql_departamentos = "SELECT id_departamento, nombre_departamento FROM departamentos";
                     $result_departamentos = $conn->query($sql_departamentos);
 
                     if ($result_departamentos->num_rows > 0) {
                         while ($departamento = $result_departamentos->fetch_assoc()) {
-                            echo "<option value='" . $departamento['id_departamento'] . "'";
-                            if ($departamento['id_departamento'] == $empleado['id_departamento']) echo " selected";
-                            echo ">" . $departamento['nombre_departamento'] . "</option>";
+                            echo "<option value='" . $departamento['id_departamento'] . "' " . ($empleado['id_departamento'] == $departamento['id_departamento'] ? 'selected' : '') . ">" . $departamento['nombre_departamento'] . "</option>";
                         }
-                    } else {
-                        echo "<option value=''>No hay departamentos disponibles</option>";
                     }
                     ?>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </form>
 
+        <h2>Unidad Asignada</h2>
         <?php if ($unidad): ?>
-            <h3>Unidad Asignada</h3>
-            <p><strong>Número de Unidad:</strong> <?php echo $unidad['numero_unidad']; ?></p>
-            <p><strong>Fábrica:</strong> <?php echo $unidad['nombre_fabrica']; ?></p>
-            <p><strong>Fecha de Asignación:</strong> <?php echo $unidad['fecha_asignacion']; ?></p>
+            <p>Número de Unidad: <?php echo $unidad['numero_unidad']; ?></p>
+            <p>Fábrica: <?php echo $unidad['nombre_fabrica']; ?></p>
+            <p>Fecha de Asignación: <?php echo $unidad['fecha_asignacion']; ?></p>
         <?php else: ?>
-            <p>Este empleado no tiene una unidad asignada actualmente.</p>
+            <p>El operador no tiene una unidad asignada actualmente.</p>
         <?php endif; ?>
     </div>
 </body>
 </html>
-
-<?php include('includes/footer.php'); ?>
