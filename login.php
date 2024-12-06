@@ -37,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header("Location: Inicio.php");
                     break;
                 case 3:
-                    header("Location: Almacen_inicio.php");
+                    header("Location: Taller.php");
                     break;
                 case 4:
-                    header("Location: Inicio.php");
+                    header("Location: Almacen_inicio.php");
                     break;
                 default:
                     echo "Departamento no válido.";
