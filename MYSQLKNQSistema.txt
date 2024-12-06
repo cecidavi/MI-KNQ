@@ -75,15 +75,12 @@ CREATE TABLE `operador_unidad` (
   CONSTRAINT `operador_unidad_ibfk_2` FOREIGN KEY (`id_unidad`) REFERENCES `unidades` (`id_unidad`)
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
-
-
-CREATE TABLE unidad_historial (
-  id_historial INT AUTO_INCREMENT PRIMARY KEY,
-  id_unidad INT NOT NULL,
-  id_fabrica INT NOT NULL,
-  fecha_asignacion DATE NOT NULL,
-  FOREIGN KEY (id_unidad) REFERENCES unidades(id_unidad),
-  FOREIGN KEY (id_fabrica) REFERENCES fabricas(id_fabrica)
+CREATE TABLE historial_unidades_asignadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    unidad VARCHAR(50) NOT NULL,
+    fabrica VARCHAR(100) NOT NULL,
+    fecha_asignacion DATE NOT NULL,
+    fecha_desasignacion DATE DEFAULT NULL
 );
 
 
