@@ -25,12 +25,49 @@ include('conexion.php'); // Incluir la conexión a la base de datos
         <h2>Gestión de Empleados</h2>
         <p>Aquí puedes gestionar los empleados.</p>
 
+        <!-- Formulario de búsqueda -->
+        <form method="GET" action="">
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" name="id_empleado" class="form-control" placeholder="Buscar por ID" value="<?php echo isset($_GET['id_empleado']) ? $_GET['id_empleado'] : ''; ?>">
+                </div>
+                <div class="col">
+                    <input type="text" name="numero_unidad" class="form-control" placeholder="Buscar por Unidad" value="<?php echo isset($_GET['numero_unidad']) ? $_GET['numero_unidad'] : ''; ?>">
+                </div>
+                <div class="col">
+                    <input type="text" name="nombre" class="form-control" placeholder="Buscar por Nombre" value="<?php echo isset($_GET['nombre']) ? $_GET['nombre'] : ''; ?>">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </form>
+
         <?php
-        // Consulta para obtener los datos de los empleados y la unidad asignada actual (si existe)
+        // Obtener los valores de búsqueda
+        $id_empleado = isset($_GET['id_empleado']) ? $_GET['id_empleado'] : '';
+        $numero_unidad = isset($_GET['numero_unidad']) ? $_GET['numero_unidad'] : '';
+        $nombre = isset($_GET['nombre']) ? $_GET['nombre'] : '';
+
+        // Consulta para obtener los datos de los empleados con filtros
         $sql = "SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.telefono, u.numero_unidad 
                 FROM empleados e 
                 LEFT JOIN asignaciones a ON e.id_empleado = a.id_operador AND a.fecha_desasignacion IS NULL
-                LEFT JOIN unidades u ON a.id_unidad = u.id_unidad";
+                LEFT JOIN unidades u ON a.id_unidad = u.id_unidad
+                WHERE 1";
+
+        // Agregar filtros a la consulta
+        if ($id_empleado) {
+            $sql .= " AND e.id_empleado LIKE '%$id_empleado%'";
+        }
+        if ($numero_unidad) {
+            $sql .= " AND u.numero_unidad LIKE '%$numero_unidad%'";
+        }
+        if ($nombre) {
+            $sql .= " AND e.nombre LIKE '%$nombre%'";
+        }
+
+        // Ejecutar la consulta
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
