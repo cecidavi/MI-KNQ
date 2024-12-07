@@ -29,8 +29,8 @@ include('conexion.php'); // Incluir la conexión a la base de datos
         // Consulta para obtener los datos de los empleados y la unidad asignada actual (si existe)
         $sql = "SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, e.telefono, u.numero_unidad 
                 FROM empleados e 
-                LEFT JOIN operador_unidad ou ON e.id_empleado = ou.id_operador AND ou.fecha_desasignacion IS NULL
-                LEFT JOIN unidades u ON ou.id_unidad = u.id_unidad";
+                LEFT JOIN asignaciones a ON e.id_empleado = a.id_operador AND a.fecha_desasignacion IS NULL
+                LEFT JOIN unidades u ON a.id_unidad = u.id_unidad";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {

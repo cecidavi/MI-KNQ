@@ -28,12 +28,12 @@ if (isset($_GET['id'])) {
         exit();
     }
 
-    // Consulta para obtener los datos de la unidad asignada al operador
-    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion, ou.id_operador_unidad
+    // Consulta para obtener los datos de la unidad asignada al operador (utilizando la tabla 'asignaciones')
+    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, a.fecha_asignacion, a.id_asignacion
                    FROM unidades u
-                   JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
-                   JOIN fabricas f ON u.id_fabrica = f.id_fabrica
-                   WHERE ou.id_operador = ? AND ou.fecha_desasignacion IS NULL";
+                   JOIN asignaciones a ON u.id_unidad = a.id_unidad
+                   JOIN fabricas f ON a.id_fabrica = f.id_fabrica
+                   WHERE a.id_operador = ? AND a.fecha_desasignacion IS NULL";
     $stmt_unidad = $conn->prepare($sql_unidad);
     $stmt_unidad->bind_param("i", $id_empleado);
     $stmt_unidad->execute();
@@ -46,12 +46,12 @@ if (isset($_GET['id'])) {
     }
 
     // Consulta para obtener el historial de unidades asignadas
-    $sql_historial = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion, ou.fecha_desasignacion
+    $sql_historial = "SELECT u.numero_unidad, f.nombre_fabrica, a.fecha_asignacion, a.fecha_desasignacion
                       FROM unidades u
-                      JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
-                      JOIN fabricas f ON u.id_fabrica = f.id_fabrica
-                      WHERE ou.id_operador = ?
-                      ORDER BY ou.fecha_asignacion";
+                      JOIN asignaciones a ON u.id_unidad = a.id_unidad
+                      JOIN fabricas f ON a.id_fabrica = f.id_fabrica
+                      WHERE a.id_operador = ?
+                      ORDER BY a.fecha_asignacion";
     $stmt_historial = $conn->prepare($sql_historial);
     $stmt_historial->bind_param("i", $id_empleado);
     $stmt_historial->execute();
@@ -68,26 +68,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['asignar_unidad'])) {
         $id_unidad = $_POST['id_unidad'];
         $id_fabrica = $_POST['id_fabrica'];
+        $turno = $_POST['turno'];
         $fecha_asignacion = $_POST['fecha_asignacion'];
 
         // Desasignar la unidad actual
         if ($unidad) {
-            $sql_desasignar = "UPDATE operador_unidad SET fecha_desasignacion = ? WHERE id_operador = ? AND fecha_desasignacion IS NULL";
+            $sql_desasignar = "UPDATE asignaciones SET fecha_desasignacion = ? WHERE id_operador = ? AND fecha_desasignacion IS NULL";
             $stmt_desasignar = $conn->prepare($sql_desasignar);
             $stmt_desasignar->bind_param("si", $fecha_asignacion, $id_empleado);
             $stmt_desasignar->execute();
         }
 
         // Asignar la nueva unidad y actualizar la fábrica
-        $sql_asignar = "INSERT INTO operador_unidad (id_operador, id_unidad, fecha_asignacion) VALUES (?, ?, ?)";
+        $sql_asignar = "INSERT INTO asignaciones (id_operador, id_unidad, id_fabrica, turno, fecha_asignacion) VALUES (?, ?, ?, ?, ?)";
         $stmt_asignar = $conn->prepare($sql_asignar);
-        $stmt_asignar->bind_param("iis", $id_empleado, $id_unidad, $fecha_asignacion);
+        $stmt_asignar->bind_param("iiiss", $id_empleado, $id_unidad, $id_fabrica, $turno, $fecha_asignacion);
 
-        $sql_actualizar_fabrica = "UPDATE unidades SET id_fabrica = ? WHERE id_unidad = ?";
-        $stmt_actualizar_fabrica = $conn->prepare($sql_actualizar_fabrica);
-        $stmt_actualizar_fabrica->bind_param("ii", $id_fabrica, $id_unidad);
-
-        if ($stmt_asignar->execute() && $stmt_actualizar_fabrica->execute()) {
+        if ($stmt_asignar->execute()) {
             echo "<p>Unidad y fábrica asignadas correctamente.</p>";
             // Redirigir para evitar resubmisión del formulario
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id_empleado);
@@ -106,6 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Detalle del Empleado</title>
 </head>
 <body>
+
+    <h2>Detalles del Empleado</h2>
+    <p><strong>Nombre:</strong> <?php echo htmlspecialchars($empleado['nombre']); ?></p>
+    <p><strong>CURP:</strong> <?php echo htmlspecialchars($empleado['curp']); ?></p>
+    <p><strong>RFC:</strong> <?php echo htmlspecialchars($empleado['rfc']); ?></p>
+    <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($empleado['telefono']); ?></p>
+    <p><strong>Correo Electrónico:</strong> <?php echo htmlspecialchars($empleado['email']); ?></p>
+    <p><strong>Dirección:</strong> <?php echo htmlspecialchars($empleado['direccion']); ?></p>
 
     <h2>Asignación de Unidad y Fábrica</h2>
     <?php if ($unidad): ?>
@@ -134,6 +139,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<option value='" . htmlspecialchars($row['id_fabrica']) . "'>" . htmlspecialchars($row['nombre_fabrica']) . "</option>";
             }
             ?>
+        </select><br>
+        <label>Turno:</label>
+        <select name="turno">
+            <option value="mañana">Mañana</option>
+            <option value="tarde">Tarde</option>
+            <option value="noche">Noche</option>
         </select><br>
         <label>Fecha de Asignación:</label>
         <input type="date" name="fecha_asignacion" required><br>

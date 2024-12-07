@@ -28,12 +28,12 @@ if (isset($_GET['id'])) {
         exit();
     }
 
-    // Ajuste en la consulta SQL para obtener los datos de la unidad asignada al operador
-    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, ou.fecha_asignacion
-                   FROM unidades u
-                   JOIN operador_unidad ou ON u.id_unidad = ou.id_unidad
-                   JOIN fabricas f ON u.id_fabrica = f.id_fabrica
-                   WHERE ou.id_operador = ? AND ou.fecha_desasignacion IS NULL";
+    // Consulta ajustada para obtener los datos de la unidad asignada al operador desde la nueva tabla 'asignaciones'
+    $sql_unidad = "SELECT u.numero_unidad, f.nombre_fabrica, a.turno, a.fecha_asignacion
+                   FROM asignaciones a
+                   JOIN unidades u ON a.id_unidad = u.id_unidad
+                   JOIN fabricas f ON a.id_fabrica = f.id_fabrica
+                   WHERE a.id_operador = ? AND a.fecha_desasignacion IS NULL";
     $stmt_unidad = $conn->prepare($sql_unidad);
     $stmt_unidad->bind_param("i", $id_empleado);
     $stmt_unidad->execute();
@@ -126,15 +126,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="rfc">RFC:</label>
-                <input type="text" class="form-control" id="rfc" name="rfc" value="<?php echo $empleado['rfc']; ?>" required maxlength="13">
+                <input type="text" class="form-control" id="rfc" name="rfc" value="<?php echo $empleado['rfc']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="nss">NSS:</label>
-                <input type="text" class="form-control" id="nss" name="nss" value="<?php echo $empleado['nss']; ?>" required maxlength="11">
+                <input type="text" class="form-control" id="nss" name="nss" value="<?php echo $empleado['nss']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="curp">CURP:</label>
-                <input type="text" class="form-control" id="curp" name="curp" value="<?php echo $empleado['curp']; ?>" required maxlength="18">
+                <input type="text" class="form-control" id="curp" name="curp" value="<?php echo $empleado['curp']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="edad">Edad:</label>
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="telefono">Teléfono:</label>
-                <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo $empleado['telefono']; ?>" required maxlength="10">
+                <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo $empleado['telefono']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="correo">Correo:</label>
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="salario">Salario:</label>
-                <input type="number" step="0.01" class="form-control" id="salario" name="salario" value="<?php echo $empleado['salario']; ?>" required>
+                <input type="number" class="form-control" id="salario" name="salario" value="<?php echo $empleado['salario']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="fecha_ingreso">Fecha de Ingreso:</label>
@@ -162,22 +162,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="estado">Estado:</label>
-                <input type="text" class="form-control" id="estado" name="estado" value="<?php echo $empleado['estado']; ?>" required>
+                <select class="form-control" id="estado" name="estado">
+                    <option value="activo" <?php echo ($empleado['estado'] == 'activo') ? 'selected' : ''; ?>>Activo</option>
+                    <option value="inactivo" <?php echo ($empleado['estado'] == 'inactivo') ? 'selected' : ''; ?>>Inactivo</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="id_departamento">Departamento:</label>
-                <select class="form-control" id="id_departamento" name="id_departamento" required>
-                    <?php
-                    $sql_departamentos = "SELECT id_departamento, nombre_departamento FROM departamentos";
-                    $result_departamentos = $conn->query($sql_departamentos);
-
-                    if ($result_departamentos->num_rows > 0) {
-                        while ($departamento = $result_departamentos->fetch_assoc()) {
-                            echo "<option value='" . $departamento['id_departamento'] . "' " . ($empleado['id_departamento'] == $departamento['id_departamento'] ? 'selected' : '') . ">" . $departamento['nombre_departamento'] . "</option>";
-                        }
-                    }
-                    ?>
-                </select>
+                <input type="text" class="form-control" id="id_departamento" name="id_departamento" value="<?php echo $empleado['id_departamento']; ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </form>
@@ -186,6 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($unidad): ?>
             <p>Número de Unidad: <?php echo $unidad['numero_unidad']; ?></p>
             <p>Fábrica: <?php echo $unidad['nombre_fabrica']; ?></p>
+            <p>Turno: <?php echo $unidad['turno']; ?></p>
             <p>Fecha de Asignación: <?php echo $unidad['fecha_asignacion']; ?></p>
         <?php else: ?>
             <p>El operador no tiene una unidad asignada actualmente.</p>
