@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $turno = $_POST['turno'];
         $fecha_asignacion = $_POST['fecha_asignacion'];
 
-        // Desasignar la unidad actual
+        // Desasignar la unidad actual si existe
         if ($unidad) {
             $sql_desasignar = "UPDATE asignaciones SET fecha_desasignacion = ? WHERE id_operador = ? AND fecha_desasignacion IS NULL";
             $stmt_desasignar = $conn->prepare($sql_desasignar);
@@ -94,6 +94,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<p>Error al asignar la unidad o fábrica: " . $conn->error . "</p>";
         }
     }
+
+    // Desasignar la unidad
+    if (isset($_POST['desasignar'])) {
+        if ($unidad) {
+            $fecha_desasignacion = date("Y-m-d"); // O la fecha que desees
+            $sql_desasignar = "UPDATE asignaciones SET fecha_desasignacion = ? WHERE id_operador = ? AND fecha_desasignacion IS NULL";
+            $stmt_desasignar = $conn->prepare($sql_desasignar);
+            $stmt_desasignar->bind_param("si", $fecha_desasignacion, $id_empleado);
+            $stmt_desasignar->execute();
+
+            echo "<p>Unidad desasignada correctamente.</p>";
+            // Redirigir para evitar resubmisión del formulario
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id_empleado);
+            exit();
+        } else {
+            echo "<p>No hay unidad asignada para desasignar.</p>";
+        }
+    }
 }
 ?>
 
@@ -101,12 +119,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unidades KNQ</title>
+    <link rel="stylesheet" href="path/to/bootstrap.min.css"> <!-- Asegúrate de que esta ruta es correcta -->
+    <link rel="stylesheet" href="path/to/Empleados.css">
 </head>
 <body>
     <h2>Asignación de Unidad y Fábrica</h2>
     <?php if ($unidad): ?>
         <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
+        <form action="" method="post">
+            <input type="hidden" name="desasignar" value="1">
+            <input type="submit" value="Desasignar Unidad">
+        </form>
     <?php else: ?>
         <p>No hay unidad asignada actualmente.</p>
     <?php endif; ?>
@@ -165,5 +190,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endforeach; ?>
     </table>
 </body>
-
 </html>
