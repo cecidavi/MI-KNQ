@@ -100,18 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Detalle del Empleado</title>
+    <title>Unidades KNQ</title>
 </head>
 <body>
-
-    <h2>Detalles del Empleado</h2>
-    <p><strong>Nombre:</strong> <?php echo htmlspecialchars($empleado['nombre']); ?></p>
-    <p><strong>CURP:</strong> <?php echo htmlspecialchars($empleado['curp']); ?></p>
-    <p><strong>RFC:</strong> <?php echo htmlspecialchars($empleado['rfc']); ?></p>
-    <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($empleado['telefono']); ?></p>
-    <p><strong>Correo Electrónico:</strong> <?php echo htmlspecialchars($empleado['email']); ?></p>
-    <p><strong>Dirección:</strong> <?php echo htmlspecialchars($empleado['direccion']); ?></p>
-
     <h2>Asignación de Unidad y Fábrica</h2>
     <?php if ($unidad): ?>
         <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
