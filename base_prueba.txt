@@ -1,0 +1,122 @@
+CREATE TABLE departamentos (
+  id_departamento int(11) NOT NULL AUTO_INCREMENT,
+  nombre_departamento varchar(255) NOT NULL,
+  PRIMARY KEY (id_departamento)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES
+(1, 'Administrador'),
+(2, 'Recursos Humanos'),
+(3, 'Taller'),
+(4, 'Almacen'),
+(5, 'Cordinacion');
+
+
+
+CREATE TABLE empleados (
+  id_empleado int(11) NOT NULL AUTO_INCREMENT,
+  nombre varchar(255) NOT NULL,
+  apellido_paterno varchar(255) NOT NULL,
+  apellido_materno varchar(255) NOT NULL,
+  fecha_nacimiento date DEFAULT NULL,
+  rfc char(13) NOT NULL,
+  nss char(11) NOT NULL,
+  curp char(18) NOT NULL,
+  edad int(11) DEFAULT NULL,
+  telefono varchar(20) DEFAULT NULL,
+  correo varchar(40) DEFAULT NULL,
+  domicilio varchar(255) DEFAULT NULL,
+  salario decimal(10,2) DEFAULT NULL,
+  fecha_ingreso date DEFAULT NULL,
+  fecha_baja date DEFAULT NULL,
+  estado enum('activo','inactivo') DEFAULT 'activo',
+  id_departamento int(11) DEFAULT NULL,
+  PRIMARY KEY (id_empleado),
+  KEY id_departamento (id_departamento),
+  CONSTRAINT empleados_ibfk_1 FOREIGN KEY (id_departamento) REFERENCES departamentos (id_departamento)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO empleados (id_empleado, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, rfc, nss, curp, edad, telefono, correo, domicilio, salario, fecha_ingreso, fecha_baja, estado, id_departamento) VALUES
+(1, 'Juan', 'Pérez', 'González', '1985-02-15', 'PEGO850215HDFRZN01', '12345678901', 'PEGO850215HDFRZN01', 39, '5551234567', 'juan.perez@example.com', 'Calle Falsa 123, Ciudad', 25000.00, '2010-06-01', NULL, 'activo', 1),
+(2, 'María', 'López', 'Martínez', '1990-08-25', 'LOMA900825MDFRMR02', '23456789012', 'LOMA900825MDFRMR02', 34, '5552345678', 'maria.lopez@example.com', 'Avenida Siempre Viva 456, Ciudad', 30000.00, '2012-09-15', NULL, 'activo', 2),
+(3, 'Carlos', 'Hernández', 'Jiménez', '1987-11-05', 'HEJI871105HDFCRM03', '34567890123', 'HEJI871105HDFCRM03', 37, '5553456789', 'carlos.hernandez@example.com', 'Boulevard de los Sueños 789, Ciudad', 28000.00, '2011-04-20', NULL, 'activo', 3),
+(4, 'Ana', 'Ramírez', 'Flores', '1995-01-10', 'RAFL950110HDFLNR04', '45678901234', 'RAFL950110HDFLNR04', 29, '5554567890', 'ana.ramirez@example.com', 'Calle del Sol 101, Ciudad', 35000.00, '2015-03-10', NULL, 'activo', 4),
+(5, 'Luis', 'García', 'Sánchez', '1983-07-20', 'GASA830720HDFLXS05', '56789012345', 'GASA830720HDFLXS05', 41, '5555678901', 'luis.garcia@example.com', 'Avenida de la Luna 202, Ciudad', 40000.00, '2009-11-01', NULL, 'activo', 5);
+
+
+
+CREATE TABLE fabricas (
+  id_fabrica int(11) NOT NULL AUTO_INCREMENT,
+  nombre_fabrica varchar(255) NOT NULL,
+  ubicacion varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id_fabrica)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO fabricas (id_fabrica, nombre_fabrica, ubicacion) VALUES
+(1, 'Fábrica Norte', 'Calle Industrial 100, Ciudad Norte'),
+(2, 'Fábrica Sur', 'Avenida Manufactura 200, Ciudad Sur'),
+(3, 'Fábrica Este', 'Boulevard Producción 300, Ciudad Este'),
+(4, 'Fábrica Oeste', 'Calle Producción 400, Ciudad Oeste'),
+(5, 'Fábrica Central', 'Avenida Industrial 500, Ciudad Central');
+
+
+
+CREATE TABLE fabricas (
+  id_fabrica int(11) NOT NULL AUTO_INCREMENT,
+  nombre_fabrica varchar(255) NOT NULL,
+  ubicacion varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id_fabrica)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO fabricas (id_fabrica, nombre_fabrica, ubicacion) VALUES
+(1, 'Fábrica Norte', 'Calle Industrial 100, Ciudad Norte'),
+(2, 'Fábrica Sur', 'Avenida Manufactura 200, Ciudad Sur'),
+(3, 'Fábrica Este', 'Boulevard Producción 300, Ciudad Este'),
+(4, 'Fábrica Oeste', 'Calle Producción 400, Ciudad Oeste'),
+(5, 'Fábrica Central', 'Avenida Industrial 500, Ciudad Central');
+
+
+CREATE TABLE users (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  username varchar(50) NOT NULL,
+  password varchar(255) NOT NULL,
+  created_at timestamp NOT NULL DEFAULT current_timestamp(),
+  departamento_id int(11) DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY users_ibfk_2 (departamento_id),
+  CONSTRAINT users_ibfk_2 FOREIGN KEY (departamento_id) REFERENCES departamentos (id_departamento)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO users (id, username, password, created_at, departamento_id) VALUES
+(1, 'admin', MD5('admin'), current_timestamp(), 2),
+(2, 'cecilio', MD5('cecilio'), current_timestamp(), 2),
+(3, 'perla', MD5('perla'), current_timestamp(), 2),
+(4, 'amanda', MD5('amanda'), current_timestamp(), 4),
+(5, 'cordi', MD5('cordi'), current_timestamp(), 5);
+
+
+CREATE TABLE asignaciones (
+  id_asignacion int(11) NOT NULL AUTO_INCREMENT,
+  id_operador int(11) NOT NULL,
+  id_unidad int(11) NOT NULL,
+  id_fabrica int(11) NOT NULL,
+  turno enum('mañana', 'tarde', 'noche') NOT NULL,
+  fecha_asignacion date NOT NULL,
+  fecha_desasignacion date DEFAULT NULL,
+  PRIMARY KEY (id_asignacion),
+  KEY id_operador (id_operador),
+  KEY id_unidad (id_unidad),
+  KEY id_fabrica (id_fabrica),
+  CONSTRAINT asignaciones_ibfk_1 FOREIGN KEY (id_operador) REFERENCES empleados (id_empleado),
+  CONSTRAINT asignaciones_ibfk_2 FOREIGN KEY (id_unidad) REFERENCES unidades (id_unidad),
+  CONSTRAINT asignaciones_ibfk_3 FOREIGN KEY (id_fabrica) REFERENCES fabricas (id_fabrica)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO asignaciones (id_operador, id_unidad, id_fabrica, turno, fecha_asignacion, fecha_desasignacion) VALUES
+(1, 1, 1, 'mañana', '2023-01-01', '2023-02-01'),
+(2, 2, 2, 'tarde', '2023-02-01', '2023-03-01'),
+(3, 3, 3, 'noche', '2023-03-01', '2023-04-01'),
+(4, 4, 4, 'mañana', '2023-04-01', '2023-05-01'),
+(5, 5, 5, 'tarde', '2023-05-01', '2023-06-01');
+
+
