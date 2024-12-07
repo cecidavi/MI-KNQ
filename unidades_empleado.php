@@ -46,12 +46,13 @@ if (isset($_GET['id'])) {
     }
 
     // Consulta para obtener el historial de unidades asignadas
-    $sql_historial = "SELECT u.numero_unidad, f.nombre_fabrica, a.fecha_asignacion, a.fecha_desasignacion
-                      FROM unidades u
-                      JOIN asignaciones a ON u.id_unidad = a.id_unidad
-                      JOIN fabricas f ON a.id_fabrica = f.id_fabrica
-                      WHERE a.id_operador = ?
-                      ORDER BY a.fecha_asignacion";
+    $sql_historial = "SELECT u.numero_unidad, f.nombre_fabrica, a.fecha_asignacion, a.fecha_desasignacion, a.turno
+    FROM unidades u
+    JOIN asignaciones a ON u.id_unidad = a.id_unidad
+    JOIN fabricas f ON a.id_fabrica = f.id_fabrica
+    WHERE a.id_operador = ?
+    ORDER BY a.fecha_asignacion";
+
     $stmt_historial = $conn->prepare($sql_historial);
     $stmt_historial->bind_param("i", $id_empleado);
     $stmt_historial->execute();
@@ -136,6 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <option value="mañana">Mañana</option>
             <option value="tarde">Tarde</option>
             <option value="noche">Noche</option>
+            <option value="Completo">Completo</option>
+            <option value="Apoyo">Apoyo</option>
         </select><br>
         <label>Fecha de Asignación:</label>
         <input type="date" name="fecha_asignacion" required><br>
@@ -147,6 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <tr>
             <th>Unidad</th>
             <th>Fábrica</th>
+            <th>Turno</th>
             <th>Fecha de Asignación</th>
             <th>Fecha de Desasignación</th>
         </tr>
@@ -154,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <tr>
                 <td><?php echo htmlspecialchars($registro['numero_unidad']); ?></td>
                 <td><?php echo htmlspecialchars($registro['nombre_fabrica']); ?></td>
+                <td><?php echo htmlspecialchars($registro['turno']); ?></td>
                 <td><?php echo htmlspecialchars($registro['fecha_asignacion']); ?></td>
                 <td><?php echo htmlspecialchars($registro['fecha_desasignacion']); ?></td>
             </tr>
