@@ -17,14 +17,13 @@ $error_message = '';
 // Manejo de formulario para agregar o editar unidad
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['unidad_action'])) {
     $numero_unidad = $_POST['numero_unidad'];
-    $id_fabrica = $_POST['id_fabrica'];
 
     if (isset($_POST['id_unidad']) && !empty($_POST['id_unidad'])) {
         // Editar unidad
         $id_unidad = $_POST['id_unidad'];
-        $sql_update = "UPDATE unidades SET numero_unidad = ?, id_fabrica = ? WHERE id_unidad = ?";
+        $sql_update = "UPDATE unidades SET numero_unidad = ? WHERE id_unidad = ?";
         $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("sii", $numero_unidad, $id_fabrica, $id_unidad);
+        $stmt_update->bind_param("si", $numero_unidad, $id_unidad);
 
         if ($stmt_update->execute()) {
             $success_message = "Unidad actualizada correctamente.";
@@ -35,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['unidad_action'])) {
         $stmt_update->close();
     } else {
         // Agregar nueva unidad
-        $sql_insert = "INSERT INTO unidades (numero_unidad, id_fabrica) VALUES (?, ?)";
+        $sql_insert = "INSERT INTO unidades (numero_unidad) VALUES (?)";
         $stmt_insert = $conn->prepare($sql_insert);
-        $stmt_insert->bind_param("si", $numero_unidad, $id_fabrica);
+        $stmt_insert->bind_param("s", $numero_unidad);
 
         if ($stmt_insert->execute()) {
             $success_message = "Unidad agregada correctamente.";
@@ -66,14 +65,8 @@ if (isset($_GET['delete_id'])) {
 }
 
 // Consulta para obtener los datos de las unidades
-$sql = "SELECT u.id_unidad, u.numero_unidad, f.nombre_fabrica 
-        FROM unidades u 
-        LEFT JOIN fabricas f ON u.id_fabrica = f.id_fabrica";
+$sql = "SELECT id_unidad, numero_unidad FROM unidades";
 $result = $conn->query($sql);
-
-// Consulta para obtener todas las fábricas (para el formulario de asignación)
-$sql_all_fabricas = "SELECT id_fabrica, nombre_fabrica FROM fabricas";
-$result_all_fabricas = $conn->query($sql_all_fabricas);
 
 $conn->close();
 ?>
@@ -107,16 +100,6 @@ $conn->close();
             <input type="hidden" name="unidad_action" value="manage_unidad">
             <label>Número de la Unidad:</label>
             <input type="text" name="numero_unidad" id="numero_unidad" required class="form-control"><br>
-            <label>Fábrica:</label>
-            <select name="id_fabrica" id="id_fabrica" class="form-control" required>
-                <?php
-                if ($result_all_fabricas->num_rows > 0) {
-                    while ($row_fabrica = $result_all_fabricas->fetch_assoc()) {
-                        echo "<option value='" . $row_fabrica["id_fabrica"] . "'>" . $row_fabrica["nombre_fabrica"] . "</option>";
-                    }
-                }
-                ?>
-            </select><br>
             <input type="submit" value="Guardar" class="btn btn-primary">
             <input type="reset" value="Cancelar" class="btn btn-secondary">
         </form>
@@ -125,7 +108,7 @@ $conn->close();
         <?php
         if ($result->num_rows > 0) {
             echo "<table class='table'>";
-            echo "<thead><tr><th>ID</th><th>Número</th><th>Fábrica</th><th>Acciones</th></tr></thead>";
+            echo "<thead><tr><th>ID</th><th>Número</th><th>Acciones</th></tr></thead>";
             echo "<tbody>";
 
             // Salida de datos de cada fila
@@ -133,9 +116,8 @@ $conn->close();
                 echo "<tr>";
                 echo "<td>" . $row["id_unidad"] . "</td>";
                 echo "<td>" . $row["numero_unidad"] . "</td>";
-                echo "<td>" . $row["nombre_fabrica"] . "</td>";
                 echo "<td>
-                        <button class='btn btn-info' onclick='editarUnidad(" . $row["id_unidad"] . ", \"" . $row["numero_unidad"] . "\", " . ($row["id_fabrica"] ?? 'null') . ")'>Editar</button>
+                        <button class='btn btn-info' onclick='editarUnidad(" . $row["id_unidad"] . ", \"" . $row["numero_unidad"] . "\")'>Editar</button>
                         <a href='gestionar_unidades.php?delete_id=" . $row["id_unidad"] . "' class='btn btn-danger' onclick='return confirm(\"¿Estás seguro de que deseas eliminar esta unidad?\")'>Eliminar</a>
                       </td>";
                 echo "</tr>";
@@ -149,10 +131,9 @@ $conn->close();
     </div>
     <script src="path/to/bootstrap.bundle.min.js"></script> <!-- Asegúrate de que esta ruta es correcta -->
     <script>
-        function editarUnidad(id, numero, fabricaId) {
+        function editarUnidad(id, numero) {
             document.getElementById('id_unidad').value = id;
             document.getElementById('numero_unidad').value = numero;
-            document.getElementById('id_fabrica').value = fabricaId;
         }
     </script>
 </body>
