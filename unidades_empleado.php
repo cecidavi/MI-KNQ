@@ -121,73 +121,88 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unidades KNQ</title>
-    <link rel="stylesheet" href="path/to/bootstrap.min.css"> <!-- Asegúrate de que esta ruta es correcta -->
-    <link rel="stylesheet" href="path/to/Empleados.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="path/to/unidades_empleado.css"> <!-- Asegúrate de que la ruta es correcta -->
 </head>
 <body>
-    <h2>Asignación de Unidad y Fábrica</h2>
-    <?php if ($unidad): ?>
-        <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
+    <div class="container">
+        <h2>Asignación de Unidad y Fábrica</h2>
+        <?php if ($unidad): ?>
+            <p>Unidad actual: <?php echo htmlspecialchars($unidad['numero_unidad']); ?> - <?php echo htmlspecialchars($unidad['nombre_fabrica']); ?> (Asignada el <?php echo htmlspecialchars($unidad['fecha_asignacion']); ?>)</p>
+            <form action="" method="post">
+                <input type="hidden" name="desasignar" value="1">
+                <input type="submit" value="Desasignar Unidad" class="btn btn-danger">
+            </form>
+        <?php else: ?>
+            <p>No hay unidad asignada actualmente.</p>
+        <?php endif; ?>
+
         <form action="" method="post">
-            <input type="hidden" name="desasignar" value="1">
-            <input type="submit" value="Desasignar Unidad">
+            <div class="mb-3">
+                <label class="form-label">Unidad:</label>
+                <select name="id_unidad" class="form-control">
+                    <?php
+                    $sql_unidades = "SELECT id_unidad, numero_unidad FROM unidades";
+                    $result_unidades = $conn->query($sql_unidades);
+                    while ($row = $result_unidades->fetch_assoc()) {
+                        echo "<option value='" . htmlspecialchars($row['id_unidad']) . "'>" . htmlspecialchars($row['numero_unidad']) . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Fábrica:</label>
+                <select name="id_fabrica" class="form-control">
+                    <?php
+                    $sql_fabricas = "SELECT id_fabrica, nombre_fabrica FROM fabricas";
+                    $result_fabricas = $conn->query($sql_fabricas);
+                    while ($row = $result_fabricas->fetch_assoc()) {
+                        echo "<option value='" . htmlspecialchars($row['id_fabrica']) . "'>" . htmlspecialchars($row['nombre_fabrica']) . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Turno:</label>
+                <select name="turno" class="form-control">
+                    <option value="mañana">Mañana</option>
+                    <option value="tarde">Tarde</option>
+                    <option value="noche">Noche</option>
+                    <option value="Completo">Completo</option>
+                    <option value="Apoyo">Apoyo</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Fecha de Asignación:</label>
+                <input type="date" name="fecha_asignacion" class="form-control" required>
+            </div>
+            <input type="submit" name="asignar_unidad" value="Asignar" class="btn btn-success">
         </form>
-    <?php else: ?>
-        <p>No hay unidad asignada actualmente.</p>
-    <?php endif; ?>
 
-    <form action="" method="post">
-        <label>Unidad:</label>
-        <select name="id_unidad">
-            <?php
-            $sql_unidades = "SELECT id_unidad, numero_unidad FROM unidades";
-            $result_unidades = $conn->query($sql_unidades);
-            while ($row = $result_unidades->fetch_assoc()) {
-                echo "<option value='" . htmlspecialchars($row['id_unidad']) . "'>" . htmlspecialchars($row['numero_unidad']) . "</option>";
-            }
-            ?>
-        </select><br>
-        <label>Fábrica:</label>
-        <select name="id_fabrica">
-            <?php
-            $sql_fabricas = "SELECT id_fabrica, nombre_fabrica FROM fabricas";
-            $result_fabricas = $conn->query($sql_fabricas);
-            while ($row = $result_fabricas->fetch_assoc()) {
-                echo "<option value='" . htmlspecialchars($row['id_fabrica']) . "'>" . htmlspecialchars($row['nombre_fabrica']) . "</option>";
-            }
-            ?>
-        </select><br>
-        <label>Turno:</label>
-        <select name="turno">
-            <option value="mañana">Mañana</option>
-            <option value="tarde">Tarde</option>
-            <option value="noche">Noche</option>
-            <option value="Completo">Completo</option>
-            <option value="Apoyo">Apoyo</option>
-        </select><br>
-        <label>Fecha de Asignación:</label>
-        <input type="date" name="fecha_asignacion" required><br>
-        <input type="submit" name="asignar_unidad" value="Asignar">
-    </form>
-
-    <h2>Historial de Unidades Asignadas</h2>
-    <table>
-        <tr>
-            <th>Unidad</th>
-            <th>Fábrica</th>
-            <th>Turno</th>
-            <th>Fecha de Asignación</th>
-            <th>Fecha de Desasignación</th>
-        </tr>
-        <?php foreach ($historial as $registro): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($registro['numero_unidad']); ?></td>
-                <td><?php echo htmlspecialchars($registro['nombre_fabrica']); ?></td>
-                <td><?php echo htmlspecialchars($registro['turno']); ?></td>
-                <td><?php echo htmlspecialchars($registro['fecha_asignacion']); ?></td>
-                <td><?php echo htmlspecialchars($registro['fecha_desasignacion']); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+        <h2>Historial de Unidades Asignadas</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Unidad</th>
+                    <th>Fábrica</th>
+                    <th>Turno</th>
+                    <th>Fecha de Asignación</th>
+                    <th>Fecha de Desasignación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($historial as $registro): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($registro['numero_unidad']); ?></td>
+                        <td><?php echo htmlspecialchars($registro['nombre_fabrica']); ?></td>
+                        <td><?php echo htmlspecialchars($registro['turno']); ?></td>
+                        <td><?php echo htmlspecialchars($registro['fecha_asignacion']); ?></td>
+                        <td><?php echo htmlspecialchars($registro['fecha_desasignacion']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
+

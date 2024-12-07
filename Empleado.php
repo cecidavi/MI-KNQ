@@ -101,74 +101,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles del Empleado - MI KNQ</title>
-    <link rel="stylesheet" href="path/to/bootstrap.min.css"> 
-    <link rel="stylesheet" href="path/to/Empleados.css"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="path/to/Empleado.css"> <!-- Asegúrate de que esta ruta sea correcta -->
 </head>
 <body>
     <div class="container">
         <h2>Detalles del Empleado</h2>
         <form method="POST" action="">
-            <div class="form-group">
-                <label for="nombre">Nombre:</label>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo $empleado['nombre']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="apellido_paterno">Apellido Paterno:</label>
+            <div class="mb-3">
+                <label for="apellido_paterno" class="form-label">Apellido Paterno:</label>
                 <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" value="<?php echo $empleado['apellido_paterno']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="apellido_materno">Apellido Materno:</label>
+            <div class="mb-3">
+                <label for="apellido_materno" class="form-label">Apellido Materno:</label>
                 <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" value="<?php echo $empleado['apellido_materno']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+            <div class="mb-3">
+                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento:</label>
                 <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="<?php echo $empleado['fecha_nacimiento']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="rfc">RFC:</label>
+            <div class="mb-3">
+                <label for="rfc" class="form-label">RFC:</label>
                 <input type="text" class="form-control" id="rfc" name="rfc" value="<?php echo $empleado['rfc']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="nss">NSS:</label>
+            <div class="mb-3">
+                <label for="nss" class="form-label">NSS:</label>
                 <input type="text" class="form-control" id="nss" name="nss" value="<?php echo $empleado['nss']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="curp">CURP:</label>
+            <div class="mb-3">
+                <label for="curp" class="form-label">CURP:</label>
                 <input type="text" class="form-control" id="curp" name="curp" value="<?php echo $empleado['curp']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="edad">Edad:</label>
+            <div class="mb-3">
+                <label for="edad" class="form-label">Edad:</label>
                 <input type="number" class="form-control" id="edad" name="edad" value="<?php echo $empleado['edad']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="telefono">Teléfono:</label>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono:</label>
                 <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo $empleado['telefono']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="correo">Correo:</label>
+            <div class="mb-3">
+                <label for="correo" class="form-label">Correo:</label>
                 <input type="email" class="form-control" id="correo" name="correo" value="<?php echo $empleado['correo']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="domicilio">Domicilio:</label>
+            <div class="mb-3">
+                <label for="domicilio" class="form-label">Domicilio:</label>
                 <input type="text" class="form-control" id="domicilio" name="domicilio" value="<?php echo $empleado['domicilio']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="salario">Salario:</label>
+            <div class="mb-3">
+                <label for="salario" class="form-label">Salario:</label>
                 <input type="number" class="form-control" id="salario" name="salario" value="<?php echo $empleado['salario']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="fecha_ingreso">Fecha de Ingreso:</label>
+            <div class="mb-3">
+                <label for="fecha_ingreso" class="form-label">Fecha de Ingreso:</label>
                 <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" value="<?php echo $empleado['fecha_ingreso']; ?>" required>
             </div>
-            <div class="form-group">
-                <label for="estado">Estado:</label>
+            <div class="mb-3">
+                <label for="estado" class="form-label">Estado:</label>
                 <select class="form-control" id="estado" name="estado">
                     <option value="activo" <?php echo ($empleado['estado'] == 'activo') ? 'selected' : ''; ?>>Activo</option>
                     <option value="inactivo" <?php echo ($empleado['estado'] == 'inactivo') ? 'selected' : ''; ?>>Inactivo</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="id_departamento">Departamento:</label>
+            <div class="mb-3">
+                <label for="id_departamento" class="form-label">Departamento:</label>
                 <input type="text" class="form-control" id="id_departamento" name="id_departamento" value="<?php echo $empleado['id_departamento']; ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
