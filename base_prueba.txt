@@ -61,19 +61,19 @@ INSERT INTO fabricas (id_fabrica, nombre_fabrica, ubicacion) VALUES
 
 
 
-CREATE TABLE fabricas (
-  id_fabrica int(11) NOT NULL AUTO_INCREMENT,
-  nombre_fabrica varchar(255) NOT NULL,
-  ubicacion varchar(255) DEFAULT NULL,
-  PRIMARY KEY (id_fabrica)
+CREATE TABLE unidades (
+  id_unidad int(11) NOT NULL AUTO_INCREMENT,
+  numero_unidad varchar(50) NOT NULL,
+  PRIMARY KEY (id_unidad)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO fabricas (id_fabrica, nombre_fabrica, ubicacion) VALUES
-(1, 'Fábrica Norte', 'Calle Industrial 100, Ciudad Norte'),
-(2, 'Fábrica Sur', 'Avenida Manufactura 200, Ciudad Sur'),
-(3, 'Fábrica Este', 'Boulevard Producción 300, Ciudad Este'),
-(4, 'Fábrica Oeste', 'Calle Producción 400, Ciudad Oeste'),
-(5, 'Fábrica Central', 'Avenida Industrial 500, Ciudad Central');
+INSERT INTO unidades (id_unidad, numero_unidad) VALUES
+(1, 'Unidad 101'),
+(2, 'Unidad 102'),
+(3, 'Unidad 103'),
+(4, 'Unidad 104'),
+(5, 'Unidad 105');
+
 
 
 CREATE TABLE users (
