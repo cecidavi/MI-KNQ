@@ -17,7 +17,6 @@ $result_departamentos = $conn->query($sql_departamentos);
 // Obtener las piezas para el formulario
 $sql_piezas = "SELECT * FROM piezas";
 $result_piezas = $conn->query($sql_piezas);
-
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +46,7 @@ $result_piezas = $conn->query($sql_piezas);
 
     <div class="form-group">
         <label for="trabajador">Seleccionar Trabajador:</label>
-        <select id="trabajador" name="trabajador" class="form-control">
+        <select id="trabajador" name="trabajador" class="form-control" onchange="actualizarNombrePersona()">
             <option value="">Seleccionar Trabajador</option>
         </select>
     </div>
@@ -82,6 +81,9 @@ $result_piezas = $conn->query($sql_piezas);
         <input type="time" id="hora" name="hora" class="form-control" required>
     </div>
 
+    <!-- Campo oculto para el nombre de la persona (trabajador) -->
+    <input type="hidden" id="nombre_persona" name="nombre_persona">
+
     <!-- Botón con diseño de Bootstrap -->
     <input type="submit" value="Registrar Salida" class="btn btn-primary">
 </form>
@@ -107,10 +109,20 @@ function cargarEmpleados() {
         }
     });
 }
+
+function actualizarNombrePersona() {
+    var trabajadorSelect = document.getElementById("trabajador");
+    var nombrePersonaInput = document.getElementById("nombre_persona");
+    
+    // Obtener el nombre del trabajador seleccionado
+    var nombrePersona = trabajadorSelect.options[trabajadorSelect.selectedIndex].text;
+    
+    // Asignar el nombre al campo oculto
+    nombrePersonaInput.value = nombrePersona;
+}
 </script>
 
 </body>
 </html>
 
 <?php include('includes/footer.php'); ?>
-
