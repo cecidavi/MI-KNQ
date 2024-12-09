@@ -17,6 +17,11 @@ $result_departamentos = $conn->query($sql_departamentos);
 // Obtener las piezas para el formulario
 $sql_piezas = "SELECT * FROM piezas";
 $result_piezas = $conn->query($sql_piezas);
+
+// Obtener las salidas del día de hoy
+$hoy = date('Y-m-d');
+$sql_salidas_hoy = "SELECT * FROM salidas WHERE fecha = '$hoy'";
+$result_salidas_hoy = $conn->query($sql_salidas_hoy);
 ?>
 
 <!DOCTYPE html>
@@ -33,60 +38,88 @@ $result_piezas = $conn->query($sql_piezas);
 
 <h2>Registrar Salida de Piezas</h2>
 <div class="container">
-<form action="procesar_salida.php" method="POST">
-    <div class="form-group">
-        <label for="area">Seleccionar Área (Departamento):</label>
-        <select id="area" name="area" class="form-control" onchange="cargarEmpleados()">
-            <option value="">Seleccionar Área</option>
-            <?php while ($row_departamento = $result_departamentos->fetch_assoc()): ?>
-                <option value="<?= $row_departamento['id_departamento'] ?>"><?= $row_departamento['nombre_departamento'] ?></option>
+    <form id="formSalida">
+        <div class="form-group">
+            <label for="area">Seleccionar Área (Departamento):</label>
+            <select id="area" name="area" class="form-control" onchange="cargarEmpleados()">
+                <option value="">Seleccionar Área</option>
+                <?php while ($row_departamento = $result_departamentos->fetch_assoc()): ?>
+                    <option value="<?= $row_departamento['id_departamento'] ?>"><?= $row_departamento['nombre_departamento'] ?></option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="trabajador">Seleccionar Trabajador:</label>
+            <select id="trabajador" name="trabajador" class="form-control" onchange="actualizarNombrePersona()">
+                <option value="">Seleccionar Trabajador</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pieza">Seleccionar Pieza:</label>
+            <select id="pieza" name="pieza" class="form-control">
+                <option value="">Seleccionar Pieza</option>
+                <?php while ($row_pieza = $result_piezas->fetch_assoc()): ?>
+                    <option value="<?= $row_pieza['id_pieza'] ?>"><?= $row_pieza['nombre'] ?></option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="unidad">Unidad:</label>
+            <input type="text" id="unidad" name="unidad" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" class="form-control" required>
+        </div>
+
+        <!-- Campo oculto para el nombre de la persona (trabajador) -->
+        <input type="hidden" id="nombre_persona" name="nombre_persona">
+
+        <!-- Botón con diseño de Bootstrap -->
+        <input type="submit" value="Registrar Salida" class="btn btn-primary">
+    </form>
+
+    <h3>Salidas del día de hoy</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID Salida</th>
+                <th>Pieza</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Nombre Persona</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+            </tr>
+        </thead>
+        <tbody id="salidasHoy">
+            <?php while ($row_salida = $result_salidas_hoy->fetch_assoc()): ?>
+            <tr>
+                <td><?= $row_salida['id_salida'] ?></td>
+                <td><?= $row_salida['id_pieza'] ?></td>
+                <td><?= $row_salida['cantidad'] ?></td>
+                <td><?= $row_salida['unidad'] ?></td>
+                <td><?= $row_salida['nombre_persona'] ?></td>
+                <td><?= $row_salida['fecha'] ?></td>
+                <td><?= $row_salida['hora'] ?></td>
+            </tr>
             <?php endwhile; ?>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="trabajador">Seleccionar Trabajador:</label>
-        <select id="trabajador" name="trabajador" class="form-control" onchange="actualizarNombrePersona()">
-            <option value="">Seleccionar Trabajador</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="pieza">Seleccionar Pieza:</label>
-        <select id="pieza" name="pieza" class="form-control">
-            <option value="">Seleccionar Pieza</option>
-            <?php while ($row_pieza = $result_piezas->fetch_assoc()): ?>
-                <option value="<?= $row_pieza['id_pieza'] ?>"><?= $row_pieza['nombre'] ?></option>
-            <?php endwhile; ?>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="cantidad">Cantidad:</label>
-        <input type="number" id="cantidad" name="cantidad" class="form-control" required>
-    </div>
-
-    <div class="form-group">
-        <label for="unidad">Unidad:</label>
-        <input type="text" id="unidad" name="unidad" class="form-control" required>
-    </div>
-
-    <div class="form-group">
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha" class="form-control" required>
-    </div>
-
-    <div class="form-group">
-        <label for="hora">Hora:</label>
-        <input type="time" id="hora" name="hora" class="form-control" required>
-    </div>
-
-    <!-- Campo oculto para el nombre de la persona (trabajador) -->
-    <input type="hidden" id="nombre_persona" name="nombre_persona">
-
-    <!-- Botón con diseño de Bootstrap -->
-    <input type="submit" value="Registrar Salida" class="btn btn-primary">
-</form>
+        </tbody>
+    </table>
 </div>
 
 <script>
@@ -120,6 +153,28 @@ function actualizarNombrePersona() {
     // Asignar el nombre al campo oculto
     nombrePersonaInput.value = nombrePersona;
 }
+
+$('#formSalida').on('submit', function(e) {
+    e.preventDefault(); // Previene la recarga de la página
+
+    $.ajax({
+        type: "POST",
+        url: "procesar_salida.php",
+        data: $(this).serialize(),
+        success: function(response) {
+            let res = JSON.parse(response);
+            if (res.success) {
+                alert(res.message);
+                location.reload(); // Recarga la página para ver las salidas actualizadas
+            } else {
+                alert(res.message);
+            }
+        },
+        error: function() {
+            alert("Error al registrar la salida.");
+        }
+    });
+});
 </script>
 
 </body>

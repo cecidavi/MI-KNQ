@@ -27,12 +27,12 @@ if ($conn->query($sql_salidas) === TRUE) {
                              WHERE id_pieza = '$pieza_id' AND cantidad >= $cantidad";
 
     if ($conn->query($sql_actualizar_pieza) === TRUE) {
-        echo "Salida registrada correctamente y cantidad de piezas actualizada.";
+        echo json_encode(['success' => true, 'message' => 'Salida registrada correctamente y cantidad de piezas actualizada.']);
     } else {
-        echo "Error al actualizar la cantidad de piezas: " . $conn->error;
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar la cantidad de piezas: ' . $conn->error]);
     }
 } else {
-    echo "Error al registrar la salida: " . $conn->error;
+    echo json_encode(['success' => false, 'message' => 'Error al registrar la salida: ' . $conn->error]);
 }
 
 // Cierra la conexión
