@@ -17,6 +17,9 @@ $result_departamentos = $conn->query($sql_departamentos);
 // Obtener las piezas para el formulario
 $sql_piezas = "SELECT * FROM piezas";
 $result_piezas = $conn->query($sql_piezas);
+
+// Obtener la fecha actual
+$fecha_actual = date("Y-m-d");
 ?>
 
 <!DOCTYPE html>
@@ -73,7 +76,7 @@ $result_piezas = $conn->query($sql_piezas);
 
         <div class="form-group">
             <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" class="form-control" required>
+            <input type="date" id="fecha" name="fecha" class="form-control" value="<?= $fecha_actual ?>" required>
         </div>
 
         <div class="form-group">
@@ -92,7 +95,7 @@ $result_piezas = $conn->query($sql_piezas);
     <form id="formFecha">
         <div class="form-group">
             <label for="fecha_consulta">Seleccionar Fecha:</label>
-            <input type="date" id="fecha_consulta" name="fecha_consulta" class="form-control" required>
+            <input type="date" id="fecha_consulta" name="fecha_consulta" class="form-control" value="<?= $fecha_actual ?>" required>
         </div>
         <input type="submit" value="Consultar Salidas" class="btn btn-secondary">
     </form>
@@ -184,6 +187,23 @@ $('#formFecha').on('submit', function(e) {
         },
         error: function() {
             alert("Error al obtener las salidas de la fecha seleccionada.");
+        }
+    });
+});
+
+// Llamar a la función para cargar las salidas de la fecha actual al cargar la página
+$(document).ready(function() {
+    var fecha_actual = $('#fecha_consulta').val();
+
+    $.ajax({
+        type: "GET",
+        url: "obtener_salidas_fecha.php",
+        data: { fecha: fecha_actual },
+        success: function(data) {
+            $('#salidasFechaSeleccionada').html(data);
+        },
+        error: function() {
+            alert("Error al obtener las salidas de la fecha actual.");
         }
     });
 });
