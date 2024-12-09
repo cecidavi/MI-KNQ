@@ -27,9 +27,9 @@ include('Almacen_header.php');
         <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Reportes</h5>
-                    <p class="card-text">Genere y visualice reportes.</p>
-                    <a href="" class="btn btn-primary">Ir a Reportes</a>
+                    <h5 class="card-title">Salidas</h5>
+                    <p class="card-text">Genera una salida.</p>
+                    <a href="Almacen_Salidas.php" class="btn btn-primary">Ir a Salidas</a>
                 </div>
             </div>
         </div>

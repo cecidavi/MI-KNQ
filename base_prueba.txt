@@ -9,7 +9,8 @@ INSERT INTO departamentos (id_departamento, nombre_departamento) VALUES
 (2, 'Recursos Humanos'),
 (3, 'Taller'),
 (4, 'Almacen'),
-(5, 'Cordinacion');
+(5, 'Cordinacion'),
+(6,Operadores);
 
 
 
@@ -119,4 +120,60 @@ INSERT INTO asignaciones (id_operador, id_unidad, id_fabrica, turno, fecha_asign
 (4, 4, 4, 'mañana', '2023-04-01', '2023-05-01'),
 (5, 5, 5, 'tarde', '2023-05-01', '2023-06-01');
 
+
+
+CREATE TABLE ubicaciones (
+    id_ubicacion INT AUTO_INCREMENT PRIMARY KEY,
+    fila INT NOT NULL,
+    rack INT NOT NULL,
+    nivel INT NOT NULL,
+    codigo_ubicacion VARCHAR(255) NOT NULL UNIQUE
+);
+
+INSERT INTO ubicaciones (fila, rack, nivel, codigo_ubicacion) VALUES
+(1, 1, 1, 'F1-R1-N1'),
+(1, 1, 2, 'F1-R1-N2'),
+(1, 1, 3, 'F1-R1-N3'),
+(1, 1, 4, 'F1-R1-N4'),
+(1, 2, 1, 'F1-R2-N1'),
+(1, 2, 2, 'F1-R2-N2'),
+(1, 2, 3, 'F1-R2-N3'),
+(1, 2, 4, 'F1-R2-N4'),
+(1, 3, 1, 'F1-R3-N1'),
+(1, 3, 2, 'F1-R3-N2'),
+(1, 3, 3, 'F1-R3-N3'),
+(1, 3, 4, 'F1-R3-N4'),
+(1, 4, 1, 'F1-R4-N1'),
+(1, 4, 2, 'F1-R4-N2'),
+(1, 4, 3, 'F1-R4-N3'),
+(1, 4, 4, 'F1-R4-N4');
+
+
+CREATE TABLE piezas (
+    id_pieza INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    cantidad INT NOT NULL,
+    id_ubicacion INT,
+    FOREIGN KEY (id_ubicacion) REFERENCES ubicaciones(id_ubicacion)
+);
+
+INSERT INTO piezas (nombre, descripcion, cantidad, id_ubicacion) VALUES
+('Motor Mercedes Benz', 'Motor de repuesto para camión Mercedes Benz', 10, 1),  -- F1-R1-N1
+('Faro Volkswagen', 'Faro delantero para camión Volkswagen', 20, 2),  -- F1-R1-N2
+('Batería International', 'Batería de repuesto para camión International', 15, 3),  -- F1-R1-N3
+('Freno de disco Nissan', 'Freno de disco para unidad Nissan', 8, 4),  -- F1-R1-N4
+('Bomba de agua Sprinter', 'Bomba de agua para camioneta Sprinter', 5, 5);  -- F1-R2-N1
+
+
+CREATE TABLE salidas (
+    id_salida INT AUTO_INCREMENT PRIMARY KEY,
+    id_pieza INT,
+    cantidad INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    unidad VARCHAR(255) NOT NULL,
+    nombre_persona VARCHAR(255) NOT NULL,
+    FOREIGN KEY (id_pieza) REFERENCES piezas(id_pieza)
+);
 

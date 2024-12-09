@@ -12,7 +12,7 @@
     <h1>Almacen - MI KNQ</h1>
 </header>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="Inicio.php">Inicio</a>
+    <a class="navbar-brand" href="Almacen_inicio.php">Inicio</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -22,16 +22,19 @@
                 <a class="nav-link" href="Piezas.php">Piezas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href=""></a>
+                <a class="nav-link" href="Almacen_Salidas.php">Salidas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href=""></a>
+                <a class="nav-link" href="Almacen_Entradas.php">Entradas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href=""></a>
+                <a class="nav-link" href="Almacen_Faltante.php">Faltante</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href=""></a>
+                <a class="nav-link" href="Almcaen_Prestaoequipo.php">Prestamo de Equipo</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Entrega_pilas.php">Pilas</a>
             </li>
         </ul>
     </div>

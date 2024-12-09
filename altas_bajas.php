@@ -157,6 +157,7 @@ $conn->close();
                 $conn->close();
                 ?>
             </select><br>
+            <button type="submit" class="btn btn-primary">Agregar Empleado</button>
         </form>
 
         <h3>Lista de Empleados</h3>
