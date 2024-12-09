@@ -1,14 +1,13 @@
 <?php
 session_start();
 
-// Verifica si el usuario está autenticado
 if (!isset($_SESSION['username'])) {
     header("Location: login.html");
     exit();
 }
 
 include('includes/header.php');
-include('conexion.php'); // Incluir la conexión a la base de datos
+include('conexion.php');
 
 // Consultas para reportes de empleados
 $sql_empleados = "SELECT e.id_empleado, e.nombre, e.apellido_paterno, e.apellido_materno, u.numero_unidad, f.nombre_fabrica
@@ -38,8 +37,8 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reportes y Estadísticas - MI KNQ</title>
-    <link rel="stylesheet" href="path/to/bootstrap.min.css"> <!-- Asegúrate de que esta ruta es correcta -->
-    <link rel="stylesheet" href="path/to/Reportes.css"> <!-- Asegúrate de que esta ruta es correcta -->
+    <link rel="stylesheet" href="path/to/bootstrap.min.css">
+    <link rel="stylesheet" href="path/to/Reportes.css">
 </head>
 <body>
     <div class="container">
@@ -94,6 +93,6 @@ $conn->close();
         }
         ?>
     </div>
-    <script src="path/to/bootstrap.bundle.min.js"></script> <!-- Asegúrate de que esta ruta es correcta -->
+    <script src="path/to/bootstrap.bundle.min.js"></script>
 </body>
 </html>
