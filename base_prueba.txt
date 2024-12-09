@@ -177,3 +177,31 @@ CREATE TABLE salidas (
     FOREIGN KEY (id_pieza) REFERENCES piezas(id_pieza)
 );
 
+
+
+CREATE TABLE entradas (
+    id_entrada INT AUTO_INCREMENT PRIMARY KEY,
+    id_pieza INT,
+    cantidad INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    FOREIGN KEY (id_pieza) REFERENCES piezas(id_pieza)
+);
+
+
+CREATE TABLE herramientas (
+    id_herramienta INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    estado ENUM('disponible', 'prestada') DEFAULT 'disponible'
+);
+
+
+CREATE TABLE prestamos_herramientas (
+    id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    id_herramienta INT,
+    nombre_persona VARCHAR(255) NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE,
+    FOREIGN KEY (id_herramienta) REFERENCES herramientas(id_herramienta)
+);
