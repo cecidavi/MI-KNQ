@@ -17,11 +17,6 @@ $result_departamentos = $conn->query($sql_departamentos);
 // Obtener las piezas para el formulario
 $sql_piezas = "SELECT * FROM piezas";
 $result_piezas = $conn->query($sql_piezas);
-
-// Obtener las salidas del día de hoy
-$hoy = date('Y-m-d');
-$sql_salidas_hoy = "SELECT * FROM salidas WHERE fecha = '$hoy'";
-$result_salidas_hoy = $conn->query($sql_salidas_hoy);
 ?>
 
 <!DOCTYPE html>
@@ -93,7 +88,16 @@ $result_salidas_hoy = $conn->query($sql_salidas_hoy);
         <input type="submit" value="Registrar Salida" class="btn btn-primary">
     </form>
 
-    <h3>Salidas del día de hoy</h3>
+    <h3>Ver Salidas por Fecha</h3>
+    <form id="formFecha">
+        <div class="form-group">
+            <label for="fecha_consulta">Seleccionar Fecha:</label>
+            <input type="date" id="fecha_consulta" name="fecha_consulta" class="form-control" required>
+        </div>
+        <input type="submit" value="Consultar Salidas" class="btn btn-secondary">
+    </form>
+
+    <h3>Salidas de la Fecha Seleccionada</h3>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -106,18 +110,8 @@ $result_salidas_hoy = $conn->query($sql_salidas_hoy);
                 <th>Hora</th>
             </tr>
         </thead>
-        <tbody id="salidasHoy">
-            <?php while ($row_salida = $result_salidas_hoy->fetch_assoc()): ?>
-            <tr>
-                <td><?= $row_salida['id_salida'] ?></td>
-                <td><?= $row_salida['id_pieza'] ?></td>
-                <td><?= $row_salida['cantidad'] ?></td>
-                <td><?= $row_salida['unidad'] ?></td>
-                <td><?= $row_salida['nombre_persona'] ?></td>
-                <td><?= $row_salida['fecha'] ?></td>
-                <td><?= $row_salida['hora'] ?></td>
-            </tr>
-            <?php endwhile; ?>
+        <tbody id="salidasFechaSeleccionada">
+            <!-- Las salidas se llenarán aquí vía AJAX -->
         </tbody>
     </table>
 </div>
@@ -172,6 +166,24 @@ $('#formSalida').on('submit', function(e) {
         },
         error: function() {
             alert("Error al registrar la salida.");
+        }
+    });
+});
+
+$('#formFecha').on('submit', function(e) {
+    e.preventDefault(); // Previene la recarga de la página
+
+    var fecha = $('#fecha_consulta').val();
+
+    $.ajax({
+        type: "GET",
+        url: "obtener_salidas_fecha.php",
+        data: { fecha: fecha },
+        success: function(data) {
+            $('#salidasFechaSeleccionada').html(data);
+        },
+        error: function() {
+            alert("Error al obtener las salidas de la fecha seleccionada.");
         }
     });
 });
