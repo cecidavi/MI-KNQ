@@ -10,12 +10,25 @@ if (!isset($_SESSION['username'])) {
 include('conexion.php');
 include('Almacen_header.php');
 
+// Establecer la zona horaria
+date_default_timezone_set('America/Mexico_City');
+
 // Obtener las piezas para el formulario
 $sql_piezas = "SELECT * FROM piezas";
 $result_piezas = $conn->query($sql_piezas);
 
-// Obtener la fecha actual
-$fecha_actual = date("Y-m-d");
+// Obtener las entradas registradas
+$sql_entradas = "SELECT entradas.*, piezas.nombre AS nombre_pieza FROM entradas INNER JOIN piezas ON entradas.id_pieza = piezas.id_pieza";
+$result_entradas = $conn->query($sql_entradas);
+
+// Obtener las ubicaciones para el formulario
+$sql_ubicaciones = "SELECT * FROM ubicaciones";
+$result_ubicaciones = $conn->query($sql_ubicaciones);
+
+if (!$result_ubicaciones) {
+    echo "Error al obtener ubicaciones: " . $conn->error;
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,22 +36,24 @@ $fecha_actual = date("Y-m-d");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Entrada de Piezas</title>
+    <title>Registrar Entradas y Agregar Piezas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/Almacen_unidades.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<h2>Registrar Entrada de Piezas</h2>
+<h2>Registrar Entradas y Agregar Piezas</h2>
 <div class="container">
-    <form id="formEntrada">
+    <!-- Formulario para registrar entradas -->
+    <form id="formEntrada" action="procesar_entrada.php" method="POST">
+        <h3>Registrar Entrada de Piezas</h3>
         <div class="form-group">
             <label for="pieza">Seleccionar Pieza:</label>
-            <select id="pieza" name="pieza" class="form-control">
+            <select id="pieza" name="pieza" class="form-control" required>
                 <option value="">Seleccionar Pieza</option>
                 <?php while ($row_pieza = $result_piezas->fetch_assoc()): ?>
-                    <option value="<?= $row_pieza['id_pieza'] ?>"><?= $row_pieza['nombre'] ?></option>
+                    <option value="<?= htmlspecialchars($row_pieza['id_pieza']) ?>"><?= htmlspecialchars($row_pieza['nombre']) ?></option>
                 <?php endwhile; ?>
             </select>
         </div>
@@ -49,30 +64,65 @@ $fecha_actual = date("Y-m-d");
         </div>
 
         <div class="form-group">
+            <label for="ubicacion">Seleccionar Ubicación:</label>
+            <select id="ubicacion" name="ubicacion" class="form-control" required>
+                <option value="">Seleccionar Ubicación</option>
+                <?php while ($row_ubicacion = $result_ubicaciones->fetch_assoc()): ?>
+                    <option value="<?= htmlspecialchars($row_ubicacion['id_ubicacion']) ?>"><?= htmlspecialchars($row_ubicacion['codigo_ubicacion']) ?></option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha" name="fecha" class="form-control" value="<?= $fecha_actual ?>" required>
+            <input type="date" id="fecha" name="fecha" class="form-control" required value="<?php echo date('Y-m-d'); ?>">
         </div>
 
         <div class="form-group">
             <label for="hora">Hora:</label>
-            <input type="time" id="hora" name="hora" class="form-control" required>
+            <input type="time" id="hora" name="hora" class="form-control" required value="<?php echo date('H:i'); ?>">
         </div>
 
-        <!-- Botón con diseño de Bootstrap -->
         <input type="submit" value="Registrar Entrada" class="btn btn-primary">
     </form>
 
-    <h3>Ver Entradas por Fecha</h3>
-    <form id="formFechaEntrada">
+    <!-- Formulario para agregar nuevas piezas -->
+    <form id="formNuevaPieza">
+        <h3>Agregar Nueva Pieza</h3>
         <div class="form-group">
-            <label for="fecha_consulta_entrada">Seleccionar Fecha:</label>
-            <input type="date" id="fecha_consulta_entrada" name="fecha_consulta_entrada" class="form-control" value="<?= $fecha_actual ?>" required>
+            <label for="nombre">Nombre de la Pieza:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
         </div>
-        <input type="submit" value="Consultar Entradas" class="btn btn-secondary">
+
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" name="descripcion" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cantidad_inicial">Cantidad Inicial:</label>
+            <input type="number" id="cantidad_inicial" name="cantidad_inicial" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ubicacion_nueva">Seleccionar Ubicación:</label>
+            <select id="ubicacion_nueva" name="ubicacion_nueva" class="form-control" required>
+                <option value="">Seleccionar Ubicación</option>
+                <?php
+                // Restablecer el resultado de ubicaciones
+                $result_ubicaciones->data_seek(0);
+                while ($row_ubicacion = $result_ubicaciones->fetch_assoc()): ?>
+                    <option value="<?= htmlspecialchars($row_ubicacion['id_ubicacion']) ?>"><?= htmlspecialchars($row_ubicacion['codigo_ubicacion']) ?></option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <input type="submit" value="Agregar Pieza" class="btn btn-primary">
     </form>
 
-    <h3>Entradas de la Fecha Seleccionada</h3>
-    <table class="table table-bordered">
+    <!-- Tabla para mostrar las entradas registradas -->
+    <h3>Entradas Registradas</h3>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID Entrada</th>
@@ -80,69 +130,70 @@ $fecha_actual = date("Y-m-d");
                 <th>Cantidad</th>
                 <th>Fecha</th>
                 <th>Hora</th>
+                <th>Ubicación</th>
             </tr>
         </thead>
-        <tbody id="entradasFechaSeleccionada">
-            <!-- Las entradas se llenarán aquí vía AJAX -->
+        <tbody>
+            <?php while ($row_entrada = $result_entradas->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row_entrada['id_entrada']) ?></td>
+                    <td><?= htmlspecialchars($row_entrada['nombre_pieza']) ?></td>
+                    <td><?= htmlspecialchars($row_entrada['cantidad']) ?></td>
+                    <td><?= htmlspecialchars($row_entrada['fecha']) ?></td>
+                    <td><?= htmlspecialchars($row_entrada['hora']) ?></td>
+                    <td><?= htmlspecialchars($row_entrada['id_ubicacion']) ?></td>
+                </tr>
+            <?php endwhile; ?>
         </tbody>
     </table>
 </div>
 
 <script>
-$('#formEntrada').on('submit', function(e) {
-    e.preventDefault(); // Previene la recarga de la página
-
-    $.ajax({
-        type: "POST",
-        url: "procesar_entrada.php",
-        data: $(this).serialize(),
-        success: function(response) {
-            let res = JSON.parse(response);
-            if (res.success) {
-                alert(res.message);
-                location.reload(); // Recarga la página para ver las entradas actualizadas
-            } else {
-                alert(res.message);
-            }
-        },
-        error: function() {
-            alert("Error al registrar la entrada.");
-        }
-    });
-});
-
-$('#formFechaEntrada').on('submit', function(e) {
-    e.preventDefault(); // Previene la recarga de la página
-
-    var fecha = $('#fecha_consulta_entrada').val();
-
-    $.ajax({
-        type: "GET",
-        url: "obtener_entradas_fecha.php",
-        data: { fecha: fecha },
-        success: function(data) {
-            $('#entradasFechaSeleccionada').html(data);
-        },
-        error: function() {
-            alert("Error al obtener las entradas de la fecha seleccionada.");
-        }
-    });
-});
-
-// Llamar a la función para cargar las entradas de la fecha actual al cargar la página
 $(document).ready(function() {
-    var fecha_actual = $('#fecha_consulta_entrada').val();
+    // Manejo del formulario de nueva pieza
+    $('#formNuevaPieza').on('submit', function(e) {
+        e.preventDefault(); // Previene la recarga de la página
 
-    $.ajax({
-        type: "GET",
-        url: "obtener_entradas_fecha.php",
-        data: { fecha: fecha_actual },
-        success: function(data) {
-            $('#entradasFechaSeleccionada').html(data);
-        },
-        error: function() {
-            alert("Error al obtener las entradas de la fecha actual.");
-        }
+        $.ajax({
+            type: "POST",
+            url: "procesar_nueva_pieza.php",
+            data: $(this).serialize(),
+            success: function(response) {
+                let res = JSON.parse(response);
+                if (res.success) {
+                    alert(res.message);
+                    location.reload(); // Recarga la página
+                } else {
+                    alert(res.message);
+                }
+            },
+            error: function() {
+                alert("Error al agregar la pieza.");
+            }
+        });
+    });
+
+    // Manejo del formulario de entrada
+    $('#formEntrada').on('submit', function(e) {
+        e.preventDefault(); // Previene la recarga de la página
+
+        $.ajax({
+            type: "POST",
+            url: "procesar_entrada.php",
+            data: $(this).serialize(),
+            success: function(response) {
+                let res = JSON.parse(response);
+                if (res.success) {
+                    alert(res.message);
+                    location.reload(); // Recarga la página
+                } else {
+                    alert(res.message);
+                }
+            },
+            error: function() {
+                alert("Error al registrar la entrada.");
+            }
+        });
     });
 });
 </script>
