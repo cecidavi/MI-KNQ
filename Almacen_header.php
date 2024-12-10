@@ -31,7 +31,7 @@
                 <a class="nav-link" href="Almacen_Faltante.php">Faltante</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="Almcaen_Prestaoequipo.php">Prestamo de Equipo</a>
+                <a class="nav-link" href="almacen_herramientas.php">Prestamo de Equipo</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="Entrega_pilas.php">Pilas</a>
