@@ -42,7 +42,7 @@ $result = $stmt->get_result();
 </head>
 <body>
 
-<h2>Listado de Piezas</h2>
+<h2>Listado de Almacen</h2>
 
 <div class="container">
     <!-- Formulario de búsqueda -->

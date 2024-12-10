@@ -64,13 +64,8 @@ if (!$result_ubicaciones) {
         </div>
 
         <div class="form-group">
-            <label for="ubicacion">Seleccionar Ubicación:</label>
-            <select id="ubicacion" name="ubicacion" class="form-control" required>
-                <option value="">Seleccionar Ubicación</option>
-                <?php while ($row_ubicacion = $result_ubicaciones->fetch_assoc()): ?>
-                    <option value="<?= htmlspecialchars($row_ubicacion['id_ubicacion']) ?>"><?= htmlspecialchars($row_ubicacion['codigo_ubicacion']) ?></option>
-                <?php endwhile; ?>
-            </select>
+            <label for="ubicacion">Ubicación:</label>
+            <input type="text" id="ubicacion" name="ubicacion" class="form-control" readonly required>
         </div>
 
         <div class="form-group">
@@ -130,7 +125,6 @@ if (!$result_ubicaciones) {
                 <th>Cantidad</th>
                 <th>Fecha</th>
                 <th>Hora</th>
-                <th>Ubicación</th>
             </tr>
         </thead>
         <tbody>
@@ -141,7 +135,6 @@ if (!$result_ubicaciones) {
                     <td><?= htmlspecialchars($row_entrada['cantidad']) ?></td>
                     <td><?= htmlspecialchars($row_entrada['fecha']) ?></td>
                     <td><?= htmlspecialchars($row_entrada['hora']) ?></td>
-                    <td><?= htmlspecialchars($row_entrada['id_ubicacion']) ?></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
@@ -194,6 +187,31 @@ $(document).ready(function() {
                 alert("Error al registrar la entrada.");
             }
         });
+    });
+
+    // Autocompletar ubicación al seleccionar una pieza
+    $('#pieza').on('change', function() {
+        let idPieza = $(this).val();
+        if (idPieza) {
+            $.ajax({
+                type: "GET",
+                url: "obtener_ubicacion.php",
+                data: { id_pieza: idPieza },
+                success: function(response) {
+                    let res = JSON.parse(response);
+                    if (res.success) {
+                        $('#ubicacion').val(res.ubicacion); // Rellenar campo de ubicación
+                    } else {
+                        alert(res.message);
+                    }
+                },
+                error: function() {
+                    alert("Error al obtener la ubicación.");
+                }
+            });
+        } else {
+            $('#ubicacion').val(''); // Limpiar campo si no se selecciona una pieza
+        }
     });
 });
 </script>
