@@ -29,7 +29,6 @@ $stmt->execute();
 
 // Obtiene los resultados
 $result = $stmt->get_result();
-
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +61,7 @@ $result = $stmt->get_result();
                 <th>Descripción</th>
                 <th>Cantidad</th>
                 <th>Ubicación</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -76,10 +76,14 @@ $result = $stmt->get_result();
                     echo "<td>" . $row['descripcion'] . "</td>";
                     echo "<td>" . $row['cantidad'] . "</td>";
                     echo "<td>" . $row['codigo_ubicacion'] . "</td>";
+                    echo "<td>
+                        <a href='editar_pieza.php?id=" . $row['id_pieza'] . "' class='btn btn-warning btn-sm'>Editar</a>
+                        <a href='eliminar_pieza.php?id=" . $row['id_pieza'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"¿Estás seguro de eliminar esta pieza?\")'>Eliminar</a>
+                    </td>";
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='5'>No se encontraron piezas.</td></tr>";
+                echo "<tr><td colspan='6'>No se encontraron piezas.</td></tr>";
             }
             ?>
         </tbody>
@@ -87,8 +91,8 @@ $result = $stmt->get_result();
 </div>
 
 </body>
+<?php include('includes/footer.php'); ?>
 </html>
-
 
 <?php
 // Cierra la declaración y la conexión
