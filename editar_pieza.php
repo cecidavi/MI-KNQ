@@ -80,6 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Recupera todas las ubicaciones para el desplegable
+$sql_ubicaciones = "SELECT id_ubicacion, codigo_ubicacion FROM ubicaciones";
+$stmt_ubicaciones = $conn->prepare($sql_ubicaciones);
+$stmt_ubicaciones->execute();
+$result_ubicaciones = $stmt_ubicaciones->get_result();
+$stmt_ubicaciones->close();
 ?>
 
 <!DOCTYPE html>
@@ -113,8 +120,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group">
             <label for="ubicacion">Ubicación:</label>
-            <!-- Muestra el código de la ubicación en lugar del ID -->
-            <input type="text" id="ubicacion" name="ubicacion" class="form-control" value="<?php echo htmlspecialchars($codigo_ubicacion); ?>" required>
+            <select id="ubicacion" name="ubicacion" class="form-control" required>
+                <?php
+                // Recorre todas las ubicaciones y las muestra en el desplegable
+                while ($ubicacion_row = $result_ubicaciones->fetch_assoc()) {
+                    $selected = ($ubicacion_row['id_ubicacion'] == $id_ubicacion) ? 'selected' : ''; 
+                    echo "<option value=\"" . $ubicacion_row['id_ubicacion'] . "\" $selected>" . $ubicacion_row['codigo_ubicacion'] . "</option>";
+                }
+                ?>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
