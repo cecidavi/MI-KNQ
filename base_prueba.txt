@@ -205,3 +205,14 @@ CREATE TABLE prestamos_herramientas (
     fecha_devolucion DATE,
     FOREIGN KEY (id_herramienta) REFERENCES herramientas(id_herramienta)
 );
+
+
+CREATE TABLE faltantes (
+    id_faltante INT AUTO_INCREMENT PRIMARY KEY,
+    id_pieza INT,
+    cantidad_faltante INT NOT NULL,
+    descripcion TEXT,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    FOREIGN KEY (id_pieza) REFERENCES piezas(id_pieza)
+);
