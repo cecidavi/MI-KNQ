@@ -218,13 +218,6 @@ CREATE TABLE faltantes (
 );
 
 
-CREATE TABLE pilas (
-    id_pila INT AUTO_INCREMENT PRIMARY KEY,
-    tipo VARCHAR(255) NOT NULL,
-    fecha_compra DATE NOT NULL,
-    garantia_póliza VARCHAR(255)
-);
-
 CREATE TABLE entregas_pilas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_empleado INT NOT NULL,
