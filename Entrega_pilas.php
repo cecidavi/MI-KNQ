@@ -17,6 +17,16 @@ $empleados = [];
 while ($row_empleado = $result_empleados->fetch_assoc()) {
     $empleados[] = $row_empleado;
 }
+
+// Obtener la fecha seleccionada
+$fecha_seleccionada = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d');
+
+// Obtener el historial de entregas de pilas para la fecha seleccionada
+$sql_entregas = "SELECT e.id_empleado, e.fecha_entrega, e.foto_poliza, emp.nombre AS nombre_empleado
+                 FROM entregas_pilas e
+                 JOIN empleados emp ON e.id_empleado = emp.id_empleado
+                 WHERE e.fecha_entrega = '$fecha_seleccionada'";
+$result_entregas = $conn->query($sql_entregas);
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +66,36 @@ while ($row_empleado = $result_empleados->fetch_assoc()) {
 
         <input type="submit" value="Registrar Entrega" class="btn btn-primary">
     </form>
+</div>
+
+<h2>Historial de Entregas de Pilas</h2>
+<div class="container">
+    <form method="GET" action="">
+        <div class="form-group">
+            <label for="fecha">Seleccionar Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" value="<?= $fecha_seleccionada ?>" required>
+        </div>
+        <input type="submit" value="Ver Entregas" class="btn btn-secondary">
+    </form>
+
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Empleado</th>
+                <th>Fecha de Entrega</th>
+                <th>Foto de la Póliza</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = $result_entregas->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $row['nombre_empleado'] ?></td>
+                    <td><?= $row['fecha_entrega'] ?></td>
+                    <td><img src="<?= $row['foto_poliza'] ?>" alt="Foto Póliza" style="width: 100px; height: 100px;"></td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
 </div>
 
 <script>
