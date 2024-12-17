@@ -67,10 +67,22 @@ $fecha_actual = date("Y-m-d");
     </form>
 
     <h3>Faltantes Registrados</h3>
+    <div class="form-group">
+        <label for="fechaFiltro">Filtrar por fecha:</label>
+        <select id="fechaFiltro" name="fechaFiltro" class="form-control">
+            <option value="hoy">Hoy</option>
+            <option value="ayer">Ayer</option>
+            <option value="personalizada">Fecha Personalizada</option>
+        </select>
+    </div>
+    <div class="form-group" id="fechaPersonalizada" style="display: none;">
+        <label for="fechaCustom">Seleccionar Fecha:</label>
+        <input type="date" id="fechaCustom" name="fechaCustom" class="form-control">
+    </div>
+
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID Faltante</th>
                 <th>Pieza</th>
                 <th>Cantidad Faltante</th>
                 <th>Descripción</th>
@@ -85,6 +97,47 @@ $fecha_actual = date("Y-m-d");
 </div>
 
 <script>
+// Mostrar u ocultar el campo de fecha personalizada
+$('#fechaFiltro').change(function() {
+    if ($(this).val() == 'personalizada') {
+        $('#fechaPersonalizada').show();
+    } else {
+        $('#fechaPersonalizada').hide();
+    }
+});
+
+// Obtener los faltantes filtrados por fecha
+$(document).ready(function() {
+    $('#fechaFiltro').change(function() {
+        obtenerFaltantes();
+    });
+    $('#fechaCustom').change(function() {
+        obtenerFaltantes();
+    });
+
+    obtenerFaltantes(); // Obtener faltantes al cargar la página
+});
+
+// Función para obtener los faltantes filtrados
+function obtenerFaltantes() {
+    var fechaFiltro = $('#fechaFiltro').val();
+    var fechaCustom = $('#fechaCustom').val();
+
+    var parametros = { fechaFiltro: fechaFiltro, fechaCustom: fechaCustom };
+
+    $.ajax({
+        type: "GET",
+        url: "obtener_faltantes.php",
+        data: parametros,
+        success: function(data) {
+            $('#faltantesRegistrados').html(data);
+        },
+        error: function() {
+            alert("Error al obtener los faltantes registrados.");
+        }
+    });
+}
+
 // Enviar el formulario para registrar un faltante
 $('#formFaltante').on('submit', function(e) {
     e.preventDefault(); // Previene la recarga de la página
@@ -104,20 +157,6 @@ $('#formFaltante').on('submit', function(e) {
         },
         error: function() {
             alert("Error al registrar el faltante.");
-        }
-    });
-});
-
-// Obtener los faltantes registrados para mostrar en la tabla
-$(document).ready(function() {
-    $.ajax({
-        type: "GET",
-        url: "obtener_faltantes.php",
-        success: function(data) {
-            $('#faltantesRegistrados').html(data);
-        },
-        error: function() {
-            alert("Error al obtener los faltantes registrados.");
         }
     });
 });
