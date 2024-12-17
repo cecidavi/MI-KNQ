@@ -4,31 +4,28 @@ include('conexion.php');
 if (isset($_GET['fecha'])) {
     $fecha = $_GET['fecha'];
 
-    $sql = "SELECT entradas.id_entrada, piezas.nombre AS pieza_nombre, entradas.cantidad, entradas.fecha, entradas.hora
-            FROM entradas
-            JOIN piezas ON entradas.id_pieza = piezas.id_pieza
-            WHERE entradas.fecha = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $fecha);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $sql_entradas = "SELECT entradas.*, piezas.nombre AS nombre_pieza FROM entradas INNER JOIN piezas ON entradas.id_pieza = piezas.id_pieza WHERE entradas.fecha = ?";
+    $stmt_entradas = $conn->prepare($sql_entradas);
+    $stmt_entradas->bind_param("s", $fecha);
+    $stmt_entradas->execute();
+    $result_entradas = $stmt_entradas->get_result();
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>{$row['id_entrada']}</td>
-                    <td>{$row['pieza_nombre']}</td>
-                    <td>{$row['cantidad']}</td>
-                    <td>{$row['fecha']}</td>
-                    <td>{$row['hora']}</td>
-                  </tr>";
+    if ($result_entradas->num_rows > 0) {
+        $entradas = [];
+        while ($row_entrada = $result_entradas->fetch_assoc()) {
+            $entradas[] = [
+                'id_entrada' => $row_entrada['id_entrada'],
+                'nombre_pieza' => $row_entrada['nombre_pieza'],
+                'cantidad' => $row_entrada['cantidad'],
+                'fecha' => $row_entrada['fecha'],
+                'hora' => $row_entrada['hora']
+            ];
         }
+        echo json_encode(['success' => true, 'entradas' => $entradas]);
     } else {
-        echo "<tr><td colspan='5'>No se encontraron entradas para la fecha seleccionada.</td></tr>";
+        echo json_encode(['success' => false, 'message' => 'No se encontraron entradas para esta fecha.']);
     }
-
-    $stmt->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Fecha no proporcionada.']);
 }
-
-$conn->close();
 ?>
