@@ -91,7 +91,6 @@ $fecha_actual = date("Y-m-d");
             </tr>
         </thead>
         <tbody id="faltantesRegistrados">
-            <!-- Los faltantes se llenarán aquí vía AJAX -->
         </tbody>
     </table>
 </div>
