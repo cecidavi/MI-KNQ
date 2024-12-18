@@ -163,22 +163,15 @@ $('#formAsignarHerramienta').on('submit', function(e) {
 $('#formEstadoHerramienta').on('submit', function(e) {
     e.preventDefault(); // Previene la recarga de la página
 
-    var herramientaId = $('#herramienta').val();
-
-    if (!herramientaId) {
-        alert("Por favor, seleccione una herramienta.");
-        return;
-    }
-
     $.ajax({
         type: "GET",
         url: "consultar_estado_herramienta.php",
-        data: { id_herramienta: herramientaId },
-        success: function(data) {
-            $('#estadoHerramienta').html(data);
+        data: $(this).serialize(),
+        success: function(response) {
+            $('#estadoHerramienta').html(response);
         },
         error: function() {
-            alert("Error al obtener el estado de la herramienta.");
+            alert("Error al consultar el estado de la herramienta.");
         }
     });
 });
@@ -186,22 +179,15 @@ $('#formEstadoHerramienta').on('submit', function(e) {
 $('#formHistorialPrestamos').on('submit', function(e) {
     e.preventDefault(); // Previene la recarga de la página
 
-    var fechaPrestamo = $('#fecha_prestamo').val();
-
-    if (!fechaPrestamo) {
-        alert("Por favor, seleccione una fecha.");
-        return;
-    }
-
     $.ajax({
         type: "GET",
         url: "consultar_historial_prestamos.php",
-        data: { fecha: fechaPrestamo },
-        success: function(data) {
-            $('#historialPrestamos').html(data);
+        data: $(this).serialize(),
+        success: function(response) {
+            $('#historialPrestamos').html(response);
         },
         error: function() {
-            alert("Error al obtener el historial de préstamos.");
+            alert("Error al consultar el historial de préstamos.");
         }
     });
 });
@@ -209,5 +195,3 @@ $('#formHistorialPrestamos').on('submit', function(e) {
 
 </body>
 </html>
-
-<?php include('includes/footer.php'); ?>

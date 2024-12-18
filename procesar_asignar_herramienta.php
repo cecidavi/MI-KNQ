@@ -1,6 +1,5 @@
 <?php
 session_start();
-include('conexion.php');
 
 // Verifica si el usuario está autenticado
 if (!isset($_SESSION['username'])) {
@@ -8,32 +7,29 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Obtiene los datos del formulario
-$id_empleado = $_POST['empleado'];
-$id_herramienta = $_POST['herramienta_asignar'];
-$fecha_prestamo = date('Y-m-d'); // Puedes cambiar la forma en que se obtiene la fecha si es necesario
+include('conexion.php');
 
-// Verificar que los datos no estén vacíos
-if (empty($id_empleado) || empty($id_herramienta)) {
-    echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
-    exit();
-}
+if (!empty($_POST['empleado']) && !empty($_POST['herramienta_asignar'])) {
+    $empleado_id = $_POST['empleado'];
+    $herramienta_id = $_POST['herramienta_asignar'];
 
-// Insertar el préstamo en la base de datos
-$sql_asignar_herramienta = "INSERT INTO prestamos_herramientas (id_herramienta, nombre_persona, fecha_prestamo) 
-                            VALUES ('$id_herramienta', (SELECT nombre FROM empleados WHERE id_empleado = '$id_empleado'), '$fecha_prestamo')";
+    // Insertar el préstamo en la base de datos
+    $sql_prestamo = "INSERT INTO prestamos (empleado, herramienta, fecha_prestamo) VALUES ((SELECT nombre FROM empleados WHERE id_empleado = ?), (SELECT nombre FROM herramientas WHERE id_herramienta = ?), NOW())";
+    $stmt_prestamo = $conn->prepare($sql_prestamo);
+    $stmt_prestamo->bind_param("ii", $empleado_id, $herramienta_id);
 
-if ($conn->query($sql_asignar_herramienta) === TRUE) {
-    // Actualizar el estado de la herramienta
-    $sql_actualizar_estado = "UPDATE herramientas SET estado='prestada' WHERE id_herramienta='$id_herramienta'";
-    if ($conn->query($sql_actualizar_estado) === TRUE) {
+    if ($stmt_prestamo->execute()) {
+        // Actualizar el estado de la herramienta a 'prestada'
+        $sql_actualizar = "UPDATE herramientas SET estado = 'prestada' WHERE id_herramienta = ?";
+        $stmt_actualizar = $conn->prepare($sql_actualizar);
+        $stmt_actualizar->bind_param("i", $herramienta_id);
+        $stmt_actualizar->execute();
+
         echo json_encode(['success' => true, 'message' => 'Herramienta asignada correctamente.']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar el estado de la herramienta: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error al asignar la herramienta.']);
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Error al asignar la herramienta: ' . $conn->error]);
+    echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
 }
-
-$conn->close();
 ?>
